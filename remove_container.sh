@@ -19,5 +19,5 @@ else # Name is set, use it
     NAME="$name"
 fi
 
-sudo docker stop $NAME
-sudo docker rm $NAME
+docker stop $NAME
+docker rm $NAME

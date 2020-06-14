@@ -19,6 +19,6 @@ else # Name is set, use it
 fi
 
 
-sudo docker start $NAME
-sudo docker attach $NAME
+docker start $NAME
+docker attach $NAME
 

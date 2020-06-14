@@ -40,7 +40,7 @@ fi
 
 FILENAME="c302_${REF}.py"
 
-sudo docker start $NAME
-sudo docker cp c302/$FILENAME $NAME:home/ow/c302/c302/
-sudo docker exec $NAME ./run_c302.sh -r ${REF} -p ${PARAMS}
-sudo docker cp $NAME:home/ow/data/. ./c302/data/.
+docker start $NAME
+docker cp c302/$FILENAME $NAME:home/ow/c302/c302/
+docker exec $NAME ./shared/run_c302.sh -r ${REF} -p ${PARAMS}
+mv shared/data/* c302/simulation_data/
