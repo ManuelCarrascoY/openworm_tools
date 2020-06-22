@@ -53,19 +53,19 @@ If you want to use the container and explore what is inside, you can attach to i
 In order to open GUI applications fron the docker container, follow these steps (you will need homebrew installed)
 1. Install XQuartz
 
-	brew cask install XQuartz
+    brew cask install XQuartz
 
 2. Install Socat
 
-	brew install socat
+    brew install socat
 
 3. Run socat (Check this [tutorial](https://www.youtube.com/watch?v=PKyj8sbZNYw))
 
-	socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
+    socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
 
 4. Find the IP of your system (should appeart under 'inet 192.168...') 
 
-	ifconfig en0
+    ifconfig en0
 
 5. Change in *build_container_OSX.sh* the DISPLAY IP
 

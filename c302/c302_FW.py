@@ -12,7 +12,7 @@ range_incl = lambda start, end:range(start, end + 1)
 
 def setup(parameter_set,
           generate=False,
-          duration=12000,
+          duration=6000,
           dt=0.05,
           target_directory='examples',
           data_reader="UpdatedSpreadsheetDataReader2",
@@ -38,7 +38,7 @@ def setup(parameter_set,
     #'''
     #'''
     units_start = 1
-    units_end = 3
+    units_end = 5
     VA_motors = ["VA%s" % c for c in range_incl(units_start, units_end)]
     VB_motors = ["VB%s" % c for c in range_incl(units_start, units_end)]
     DA_motors = ["DA%s" % c for c in range_incl(units_start, units_end)]
@@ -72,6 +72,7 @@ def setup(parameter_set,
     }
     
     input_list = []
+    sine_input_list = []
 
     '''dur = '250ms'
     amp = '3pA'
@@ -143,14 +144,20 @@ def setup(parameter_set,
                 input_list.append((mvlx, startv, dur, amp))
                 input_list.append((mvrx, startv, dur, amp))
     '''
-
+    
+    #Interneuron
+    
+    input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
+    
+    # Motoneuron square signal
+    #'''
     d_v_delay = 400
 
     start = 190
     motor_dur = '250ms'
 
-    input_list.append(('AVBL', '0ms', '10000ms', '15pA'))
-    input_list.append(('AVBR', '0ms', '10000ms', '15pA'))
+    
     input_list.append(('DB1', '%sms'%(start), motor_dur, '3pA'))
     input_list.append(('VB1', '%sms'%(start+d_v_delay), motor_dur, '3pA'))
 
@@ -161,12 +168,15 @@ def setup(parameter_set,
         input_list.append(('VB1', '%sms'%j, motor_dur, '3pA'))
         i += d_v_delay * 2
         j += d_v_delay * 2
-
-        
-    #input_list = []
-    #input_list.append(('AVBL', '0ms', '10000ms', '15pA'))
-    #input_list.append(('AVBR', '0ms', '10000ms', '15pA'))
-
+    #'''
+    
+    '''
+    sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('VB1', '0ms', '15000ms', '1.5pA', '800ms'))
+    input_list.append(('DB1', '0ms', '15000ms', '1.5pA'))
+    input_list.append(('VB1', '0ms', '15000ms', '1.5pA'))
+    
+    #'''
 
     config_param_overrides['input'] = input_list
 
@@ -272,6 +282,10 @@ def setup(parameter_set,
         for stim_input in input_list:
             cell, start, dur, current = stim_input
             c302.add_new_input(nml_doc, cell, start, dur, current, params)
+            
+        for sine_stim_input in sine_input_list:
+            cell, delay, dur, amp, period = sine_stim_input
+            c302.add_new_sinusoidal_input(nml_doc, cell, delay, dur, amp, period, params)
 
         nml_file = target_directory + '/' + reference + '.net.nml'
         writers.NeuroMLWriter.write(nml_doc, nml_file)  # Write over network file written above...

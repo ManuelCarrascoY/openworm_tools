@@ -9,7 +9,7 @@ range_incl = lambda start, end:range(start, end + 1)
 
 def setup(parameter_set,
           generate=False,
-          duration=8000,
+          duration=4000,
           dt=0.05,
           target_directory='examples',
           data_reader="UpdatedSpreadsheetDataReader2",
@@ -20,6 +20,7 @@ def setup(parameter_set,
     exec ('from parameters_%s import ParameterisedModel' % parameter_set, globals())
     params = ParameterisedModel()
 
+    
     #'''
     VA_motors = ["VA%s" % c for c in range_incl(1, 12)]
     VB_motors = ["VB%s" % c for c in range_incl(1, 11)]
@@ -29,11 +30,10 @@ def setup(parameter_set,
     VD_motors = ["VD%s" % c for c in range_incl(1, 13)]
     AS_motors = ["AS%s" % c for c in range_incl(1, 11)]
     #'''
-    motors = list(VA_motors + VB_motors + AS_motors + DA_motors + DB_motors + VD_motors + DD_motors)
     
+    motors = list(VB_motors + DB_motors)
     
-    inters = ['AVBL', 'AVBR', 'AVAL', 'AVAR']
-    #inters = ['AVBL', 'AVBR']
+    inters = ['AVBL', 'AVBR']
 
     cells = list(motors + inters)
     
@@ -43,7 +43,7 @@ def setup(parameter_set,
 
 
     cells_to_plot = cells
-    reference = "c302_%s_FW_VNC" % parameter_set
+    reference = "c302_%s_FW_VNC_simple" % parameter_set
 
 
     conns_to_include = [
@@ -63,9 +63,6 @@ def setup(parameter_set,
         r'^VB\d+-DB\d+_GJ$', 
         r'^DB\d+-VB\d+_GJ$', 
         
-        #Disconnect DA and VA gap junctions
-        r'^VA\d+-DA\d+_GJ$', 
-        r'^DA\d+-VA\d+_GJ$',
         
         #Disconect AVB electrical (all except VB and DB) and chemical (.A and .B)
         r'^AVB.-.A\d+_GJ$',
@@ -78,18 +75,7 @@ def setup(parameter_set,
         r'^AVB.-.A\d+$',
         r'^AVB.-.B\d+$',
         
-        #Disconect AVA electrical (all except VA and DA) and chemical (.A and .B)
-        r'^AVA.-.B\d+_GJ$',
-        r'^.B\d+-AVA._GJ$',
-        r'^AVA.-.S\d+_GJ$',
-        r'^.S\d+-AVA._GJ$',
-        r'^AVA.-.D\d+_GJ$',
-        r'^.D\d+-AVA._GJ$',
-                
-        r'^AVA.-.A\d+$',
-        r'^AVA.-.B\d+$',
-        
-        #Other Disconections
+
         r'^DA\d+-DB\d+$',
         r'^DB\d+-DA\d+$',
         r'^VB\d+-VA\d+$',
@@ -127,8 +113,8 @@ def setup(parameter_set,
     # Interneuron STIMULATION
     #*************************
     #'''
-    input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
-    input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVBL', '0ms', '3000ms', '15pA'))
+    input_list.append(('AVBR', '0ms', '3000ms', '15pA'))
     #'''
     
     
@@ -140,11 +126,14 @@ def setup(parameter_set,
     #'''
     sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms')) #AMP: 2pA seems to overstimulate
     sine_input_list.append(('VB1', '0ms', '15000ms', '1.5pA', '800ms'))
-
+    #sine_input_list.append(('DA1', '0ms', '15000ms', '-1.5pA', '800ms'))
+    #sine_input_list.append(('VA1', '0ms', '15000ms', '1.5pA', '800ms'))
+    
     
     config_param_overrides['input'] = input_list
 
     param_overrides = {
+        
         
         'mirrored_elec_conn_params': {
             
@@ -163,20 +152,15 @@ def setup(parameter_set,
             
         },
         
-        'initial_memb_pot': '-50 mV',
         
-        # Base elec_syn_gbase = 0.49nS
-        #r'^AVB._to_AS\d+$_exc_syn_conductance': '0.1 nS',
-        #r'^AVA._to_AS\d+$_exc_syn_conductance': '0.2 nS',
-
-
+        'initial_memb_pot': '-50 mV',
         
         #*********************************
         # Connections between units (chemical)
         #*********************************
         
         #Connect synaptically VB1 to VB2 and so on
-        r'^VB\d+_to_VB\d+$_exc_syn_conductance': '30 nS',
+        r'^VB\d+_to_VB\d+$_exc_syn_conductance': '18 nS', #18 nS
         r'^VB\d+_to_VB\d+$_exc_syn_ar': '0.19 per_s',
         r'^VB\d+_to_VB\d+$_exc_syn_ad': '73 per_s',
         r'^VB\d+_to_VB\d+$_exc_syn_beta': '2.81 per_mV',
@@ -184,7 +168,7 @@ def setup(parameter_set,
         r'^VB\d+_to_VB\d+$_exc_syn_erev': '10 mV',
         
         #Connect synaptically DB1 to DB2 and so on
-        r'^DB\d+_to_DB\d+$_exc_syn_conductance': '30 nS',
+        r'^DB\d+_to_DB\d+$_exc_syn_conductance': '20 nS', #20 nS
         r'^DB\d+_to_DB\d+$_exc_syn_ar': '0.08 per_s',
         r'^DB\d+_to_DB\d+$_exc_syn_ad': '18 per_s',
         r'^DB\d+_to_DB\d+$_exc_syn_beta': '0.21 per_mV',

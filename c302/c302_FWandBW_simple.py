@@ -41,7 +41,7 @@ def setup(parameter_set,
     VD_motors = ["VD%s" % c for c in range_incl(1, 2)]
     AS_motors = ["AS%s" % c for c in range_incl(1, 2)] 
     #'''
-    motors = list(VA_motors + VB_motors + AS_motors + DA_motors + DB_motors + VD_motors)
+    motors = list(VA_motors + VB_motors + AS_motors + DA_motors + DB_motors + VD_motors + DD_motors)
     
     inters = ['AVBL', 'AVBR', 'AVAL', 'AVAR']
 
@@ -49,9 +49,9 @@ def setup(parameter_set,
     #cells = ['AVBL','AVBR', 'VB1', 'DB1']
     #cells = ['VA1', 'DA1']
     #cells = ['VA1', 'DA1','AVAL','AVAR']
-    cells = ['AVBL','AVBR','AVAL','AVAR','VB1','DB1','VA1','DA1']
+    #cells = ['AVBL','AVBR','AVAL','AVAR','VB1','DB1','VA1','DA1']
     #cells = ['']
-    #cells = ['VB1','DB1','VA1','DA1', 'VD1', 'DD1', 'AS1']
+    cells = ['VB1','DB1','VA1','DA1', 'VD1', 'DD1', 'AS1']
     #cells = ['AVBL', 'AVBR', 'AVAL', 'AVAR']
     #cells = list(inters + motors)
     
