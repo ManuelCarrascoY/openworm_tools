@@ -23,11 +23,15 @@ else # Name is set, use it
 fi
 echo $NAME
 
+DISPLAY=`ifconfig -a | grep "inet " | tail -1 | awk '{print $2}'`":0"
+
+echo $DISPLAY
+
 docker run -d \
 --name $NAME \
 --device=/dev/dri:/dev/dri \
 --volume="$HOME/.Xauthority:/root/.Xauthority:rw" \
--e DISPLAY=192.168.1.48:0 \
+-e DISPLAY=$DISPLAY \
 --net=host \
 -e OW_OUT_DIR=$OW_OUT_DIR \
 --privileged \

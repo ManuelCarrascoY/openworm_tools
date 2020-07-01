@@ -12,7 +12,7 @@ range_incl = lambda start, end:range(start, end + 1)
 
 def setup(parameter_set,
           generate=False,
-          duration=6000,
+          duration=1,
           dt=0.05,
           target_directory='examples',
           data_reader="UpdatedSpreadsheetDataReader2",
@@ -27,9 +27,9 @@ def setup(parameter_set,
     params.set_bioparameter("unphysiological_offset_current_del", "0 ms", "Testing TapWithdrawal", "0")
     params.set_bioparameter("unphysiological_offset_current_dur", "2000 ms", "Testing TapWithdrawal", "0")
     
-    cells = ['DB1', 'VB1']
+    cells = ['VD1', 'VA1']
     
-    muscles_to_include = True
+    muscles_to_include = False
 
     cells_to_stimulate = []
 
@@ -38,8 +38,11 @@ def setup(parameter_set,
 
 
     conns_to_include = []
-    conns_to_exclude = []    
+    conns_to_exclude = [
+        r'^VD\d+-VA\d+$',
+    ]    
     conn_polarity_override = {
+        #r'^VD\d+-VA\d+$': 'exc',
     }
     conn_number_override = {
     }
@@ -48,12 +51,12 @@ def setup(parameter_set,
     sine_input_list = []
 
     
-
+    '''
     sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms'))
     sine_input_list.append(('VB1', '0ms', '15000ms', '1.5pA', '800ms'))
     input_list.append(('DB1', '0ms', '15000ms', '1.5pA'))
     input_list.append(('VB1', '0ms', '15000ms', '1.5pA'))
-
+    '''
 
     config_param_overrides['input'] = input_list
 

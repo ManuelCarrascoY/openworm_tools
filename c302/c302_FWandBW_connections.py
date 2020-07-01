@@ -8,7 +8,7 @@ range_incl = lambda start, end:range(start, end + 1)
 
 def setup(parameter_set,
           generate=False,
-          duration=16000,
+          duration=1,
           dt=0.05,
           target_directory='examples',
           data_reader="UpdatedSpreadsheetDataReader2",
@@ -30,21 +30,15 @@ def setup(parameter_set,
     VD_motors = ["VD%s" % c for c in range_incl(units_start, units_end)]
     AS_motors = ["AS%s" % c for c in range_incl(units_start, units_end)] 
     #'''
-    '''
-    VA_motors = ["VA%s" % c for c in range_incl(1, 2)]
-    VB_motors = ["VB%s" % c for c in range_incl(1, 2)]
-    DA_motors = ["DA%s" % c for c in range_incl(1, 2)]
-    DB_motors = ["DB%s" % c for c in range_incl(1, 1)]
-    # DD_motors = ["DD%s" % c for c in range_incl(units_start, units_end)]
-    VD_motors = ["VD%s" % c for c in range_incl(1, 2)]
-    AS_motors = ["AS%s" % c for c in range_incl(1, 2)] 
-    #'''
+    
     motors = list(VA_motors + VB_motors + AS_motors + DA_motors + DB_motors + VD_motors + DD_motors)
+    motors = ['AS11', 'DB7', 'VB11', 'DA9', 'VA12', 'DD6', 'VD13']
     
     inters = ['AVBL', 'AVBR', 'AVAL', 'AVAR']
 
     cells = list(motors + inters)
-
+    
+    cells = motors
     
     
     muscles_to_include = []
@@ -52,7 +46,7 @@ def setup(parameter_set,
     cells_to_stimulate = []
 
     cells_to_plot = cells
-    reference = "c302_%s_FWandBW_first" % parameter_set
+    reference = "c302_%s_FWandBW_connections" % parameter_set
 
 
     conns_to_include = [
@@ -60,20 +54,16 @@ def setup(parameter_set,
     ]
     conns_to_exclude = [
         
-        'VB2-VB4_GJ',
-        'VB4-VB2_GJ',
-        
-        
-        #########################################
-        # Remove unwanted interneuron connections
-        #########################################
-        
         # Disconnect the AVA and AVB interneurons
         r'^AVB.-AVA.$',
         r'^AVA.-AVB.$',
         r'^AVB.-AVA._GJ$',
         r'^AVA.-AVB._GJ$',
-        
+    ]    
+    
+    '''
+        'VB2-VB4_GJ',
+        'VB4-VB2_GJ',
         # Disconnect chemical stimulation from AVA and AVB
         r'^AVB.-.A\d+$', 
         r'^AVB.-.B\d+$',
@@ -97,86 +87,43 @@ def setup(parameter_set,
         
         r'^..\d+-AV.._GJ$',
         
+        #Disconnect cell connections that do not appear in the Hassel connections
         
-        #########################################################
-        # Remove connections not present in Haspel and O'Donovan
-        #########################################################
-        
-        #'''
-        r'^AS\d+-.B\d+$',
-        r'^AS\d+-VA\d+$',
-        r'^AS\d+-DD\d+$',
-        r'^AS\d+-..\d+_GJ$',
-        r'^..\d+-AS\d+_GJ$',
-        
+        r'^AS\d+-DB\d+$',
+        r'^AS\d+-DD\d+$', #The commented ones do not appear simmetrically (delete later)
         r'^DA\d+-AS\d+$',
-        r'^DA\d+-DD\d+$',
-        r'^DA\d+-VB\d+$',
-        r'^DA\d+-VA\d+$',
-        r'^DA\d+-AS\d+$',
-        r'^DA\d+-.B\d+_GJ$',
-        r'^DA\d+-.D\d+_GJ$',
-        r'^.B\d+-DA\d+_GJ$',
-        r'^.D\d+-DA\d+_GJ$',
-        
-        r'^DB\d+-.A\d+$',
-        r'^DB\d+-VB\d+$',
-        r'^DB\d+-.A\d+_GJ$',
-        r'^DB\d+-.D\d+_GJ$',
-        r'^DB\d+-VB\d+_GJ$',
-        r'^.A\d+-DB\d+_GJ$',
-        r'^.D\d+-DB\d+_GJ$',
-        r'^VB\d+-DB\d+_GJ$',
-        
-        r'^DD\d+-..\d+$',
-        r'^DD\d+-VD\d+_GJ$',
-        r'^DD\d+-.B\d+_GJ$',
-        r'^DD\d+-.A\d+_GJ$',
-        r'^VD\d+-DD\d+_GJ$',
-        r'^.B\d+-DD\d+_GJ$',
-        r'^.A\d+-DD\d+_GJ$',
-        
-        r'^VD\d+-D.\d+$',
-        r'^VD\d+-AS\d+$',
-        r'^VD\d+-VB\d+_GJ$',
-        r'^VB\d+-VD\d+_GJ$',
-        
-        r'^VB\d+-DB\d+$',
-        r'^VB\d+-.A\d+$',
-        r'^VB\d+-AS\d+$',
+        r'^DB\d+-DA\d+$',
+        r'^DA\d+-DD\d+$', #
         r'^VB\d+-VD\d+$',
-        r'^VB\d+-VA\d+_GJ$',
-        r'^VA\d+-VB\d+_GJ$',
+        r'^VD\d+-DD\d+$',
+        r'^VB\d+-VA\d+$', #
         
-        r'^VA\d+-.B\d+$',
-        r'^VA\d+-DA\d+$',
-        r'^VA\d+-AS\d+$',
         
-        #'''
-    ]    
+        #Disconnect cells that do not appear in Olivares simplifcation
+        
+        
+        #'DA1-DB1',
+        #'DB1-DA1',
+        #'VB1-VA1',
+        
+    '''
     conn_polarity_override = {
         
-        #Inhibitory in Olivares
-        
+    }
+    '''
         r'^AS\d+-VD\d+$': 'inh',
         r'^DB\d+-AS\d+$': 'inh',
         r'^DB\d+-VD\d+$': 'inh',
+        r'^DB\d+-DD\d+$': 'inh', # Inhibitory in LUNG
+        #'DA1-VD2': 'inh',
+        #'DA2-VD1': 'inh',
+        #r'^VB\d+-VD\d+$': 'inh',
         r'^VD\d+-VA\d+$': 'inh',
+        r'^VB\d+-VD\d+$': 'inh', # Inhibitory in LUNG
         r'^VA\d+-VD\d+$': 'inh',
         
-        #Excitatory in Olivares
-        
-        r'^VD\d+-VB\d+$': 'exc',
-        
-        #Inhibitory in LUNG
-        
-        #r'^DB\d+-DD\d+$': 'inh',
-        #r'^VB\d+-VD\d+$': 'inh',
-                
-    }
-    
-    #conn_polarity_override = {}
-    
+        #r'^VD\d+-DB\d+$': 'inh',
+        '''
     conn_number_override = {
         '^.+-.+$': 1,
     }
@@ -192,8 +139,6 @@ def setup(parameter_set,
     #*************************
     # Interneuron STIMULATION
     #*************************
-    
-    #Stimulations for the long nice plots
     #'''
     input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
     input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
@@ -203,56 +148,23 @@ def setup(parameter_set,
     input_list.append(('AVBR', '12000ms', '4000ms', '15pA'))
     #'''
     
-    '''
-    input_list.append(('AVBL', '0ms', '3000ms', '15pA'))
-    input_list.append(('AVBR', '0ms', '3000ms', '15pA'))
-    input_list.append(('AVAL', '3000ms', '3000ms', '15pA'))
-    input_list.append(('AVAR', '3000ms', '3000ms', '15pA'))
-    #'''
+    
     
     #*************************
     # DB1 and VB1 STIMULATION
     #*************************
 
-    # OPTION A: Square steps Input
+    # Sinusoidal Input
     #'''
-    d_v_delay = 400
-
-    start = 190
-    motor_dur = '250ms'
-    amplitude = 0.9
-    
-    input_list.append(('DB1', '%sms'%(start), motor_dur, '%spA' %amplitude))
-    input_list.append(('VB1', '%sms'%(start+d_v_delay), motor_dur, '%spA' %amplitude))
-    
-    input_list.append(('DA1', '%sms'%(start), motor_dur, '%spA' %amplitude))
-    input_list.append(('VA1', '%sms'%(start+d_v_delay), motor_dur, '%spA' %amplitude))
-    
-    i = start + 2 * d_v_delay
-    j = start + 3 * d_v_delay
-    for pulse_num in range(1,20):
-        input_list.append(('DB1', '%sms'%i, motor_dur, '%spA' %amplitude))
-        input_list.append(('VB1', '%sms'%j, motor_dur, '%spA' %amplitude))
-        input_list.append(('DA1', '%sms'%i, motor_dur, '%spA' %amplitude))
-        input_list.append(('VA1', '%sms'%j, motor_dur, '%spA' %amplitude))
-        i += d_v_delay * 2
-        j += d_v_delay * 2
+    sine_input_list.append(('DB1', '0ms', '20000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('VB1', '0ms', '20000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('DA1', '0ms', '20000ms', '-1.5pA', '800ms'))
+    sine_input_list.append(('VA1', '0ms', '20000ms', '1.5pA', '800ms'))
     #'''
     
-    
-    # OPTION C: Square + & - step inputs
-    
-    
-    
-    
-    # OPTION B: Sinusoidal Input
-    '''
-    sine_input_list.append(('DB1', '0ms', '20000ms', '1pA', '800ms'))
-    sine_input_list.append(('VB1', '0ms', '20000ms', '1pA', '800ms'))
-    sine_input_list.append(('DA1', '0ms', '20000ms', '1pA', '800ms'))
-    sine_input_list.append(('VA1', '0ms', '20000ms', '-1pA', '800ms'))
-    #'''
-    
+    input_list = []
+    sine_input_list = []
+    ramp_input_list = []
 
     config_param_overrides['input'] = input_list
 

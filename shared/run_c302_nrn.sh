@@ -42,7 +42,7 @@ cd examples
 pynml LEMS_c302_${PARAMS}_${NAME}.xml -neuron
 nrnivmodl
 nrngui LEMS_c302_${PARAMS}_${NAME}_nrn.py
-#pynml c302_${PARAMS}_${NAME}.net.nml -graph 2c 
+pynml c302_${PARAMS}_${NAME}.net.nml -graph 2c 
 
 mkdir ../../shared/data/c302_${PARAMS}_${NAME}_nrn
 cp c302_${PARAMS}_${NAME}.dat \

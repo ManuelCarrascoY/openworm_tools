@@ -49,8 +49,104 @@ def setup(parameter_set,
     conns_to_include = [
     ]
     conns_to_exclude = [
+        
+        'VB2-VB4_GJ',
+        'VB4-VB2_GJ',
+        
+        
+        #########################################
+        # Remove unwanted interneuron connections
+        #########################################
+        
+        # Disconnect the AVA and AVB interneurons
+        r'^AVB.-AVA.$',
+        r'^AVA.-AVB.$',
+        r'^AVB.-AVA._GJ$',
+        r'^AVA.-AVB._GJ$',
+        
+        # Disconnect chemical stimulation from AVA and AVB
+        r'^AVB.-.A\d+$', 
+        r'^AVB.-.B\d+$',
+        r'^AVB.-.D\d+$',
+        r'^AVB.-AS\d+$',
+        r'^AVA.-.A\d+$',
+        r'^AVA.-.B\d+$',
+        r'^AVA.-.D\d+$',
+        r'^AVA.-AS\d+$',
+        
+        # Disconnect AVA and AVB gap junctions not pressent. 
+        r'^AVB.-.A\d+_GJ$',
+        r'^AVB.-AS\d+_GJ$',
+        r'^AVB.-.D\d+_GJ$',
+        
+        r'^AVA.-.B\d+_GJ$',
+        r'^AVA.-AS\d+_GJ$',
+        r'^AVA.-.D\d+_GJ$',
+        
+        # Disconnect feedback GJ into AVA and AVB. 
+        
+        r'^..\d+-AV.._GJ$',
+        
+        
+        #########################################################
+        # Remove connections not present in Haspel and O'Donovan
+        #########################################################
+        
         #'''
-        #Connections affecting BW motion in A motorneurons
+        r'^AS\d+-.B\d+$',
+        r'^AS\d+-VA\d+$',
+        r'^AS\d+-DD\d+$',
+        r'^AS\d+-..\d+_GJ$',
+        r'^..\d+-AS\d+_GJ$',
+        
+        r'^DA\d+-AS\d+$',
+        r'^DA\d+-DD\d+$',
+        r'^DA\d+-VB\d+$',
+        r'^DA\d+-VA\d+$',
+        r'^DA\d+-AS\d+$',
+        r'^DA\d+-.B\d+_GJ$',
+        r'^DA\d+-.D\d+_GJ$',
+        r'^.B\d+-DA\d+_GJ$',
+        r'^.D\d+-DA\d+_GJ$',
+        
+        r'^DB\d+-.A\d+$',
+        r'^DB\d+-VB\d+$',
+        r'^DB\d+-.A\d+_GJ$',
+        r'^DB\d+-.D\d+_GJ$',
+        r'^DB\d+-VB\d+_GJ$',
+        r'^.A\d+-DB\d+_GJ$',
+        r'^.D\d+-DB\d+_GJ$',
+        r'^VB\d+-DB\d+_GJ$',
+        
+        r'^DD\d+-..\d+$',
+        r'^DD\d+-VD\d+_GJ$',
+        r'^DD\d+-.B\d+_GJ$',
+        r'^DD\d+-.A\d+_GJ$',
+        r'^VD\d+-DD\d+_GJ$',
+        r'^.B\d+-DD\d+_GJ$',
+        r'^.A\d+-DD\d+_GJ$',
+        
+        r'^VD\d+-D.\d+$',
+        r'^VD\d+-AS\d+$',
+        r'^VD\d+-VB\d+_GJ$',
+        r'^VB\d+-VD\d+_GJ$',
+        
+        r'^VB\d+-DB\d+$',
+        r'^VB\d+-.A\d+$',
+        r'^VB\d+-AS\d+$',
+        r'^VB\d+-VD\d+$',
+        r'^VB\d+-VA\d+_GJ$',
+        r'^VA\d+-VB\d+_GJ$',
+        
+        r'^VA\d+-.B\d+$',
+        r'^VA\d+-DA\d+$',
+        r'^VA\d+-AS\d+$',
+        
+        ###############################################
+        # Remove connections going forward in DA and VA
+        ###############################################
+        
+        #Forward connections in DA-VA
         'DA3-DA4',
         'DA2-DA3',
         'VA2-VA3',
@@ -61,71 +157,22 @@ def setup(parameter_set,
         'VA12-DA9',
         'VA1-DA2',
         
-        #Disconect VA and DA cell gap junctions
-        r'^VA\d+-DA\d+_GJ$',
-        r'^DA\d+-VA\d+_GJ$',
         
-        #Disconnect VB and DB cell gap junctions
-        r'^VB\d+-DB\d+_GJ$', 
-        r'^DB\d+-VB\d+_GJ$', 
-        
-        #Disconnect random GJ
-        'VB2-VB4_GJ',
-        'VB4-VB2_GJ',
-        
-        #Disconect AVA and AVB connections
-        r'^AVB.-AVA.$', # GOOD
-        r'^AVA.-AVB.$', # GOOD
-        r'^AVB.-AVA._GJ$', # GOOD
-        r'^AVA.-AVB._GJ$',
-        
-        
-        #Disconect AVA electrical (all except VA and DA) and chemical (.A and .B)
-        r'^AVA.-.B\d+_GJ$',
-        r'^.B\d+-AVA._GJ$',
-        r'^AVA.-.S\d+_GJ$',
-        r'^.S\d+-AVA._GJ$',
-        r'^AVA.-.D\d+_GJ$',
-        r'^.D\d+-AVA._GJ$',
-        
-        r'^AVA.-.A\d+$',
-        r'^AVA.-.B\d+$',
-        
-        
-        #Disconect AVB electrical (all except VB and DB) and chemical (.A and .B)
-        r'^AVB.-.A\d+_GJ$',
-        r'^.A\d+-AVB._GJ$',
-        r'^AVB.-.S\d+_GJ$',
-        r'^.S\d+-AVB._GJ$',
-        r'^AVB.-.D\d+_GJ$',
-        r'^.D\d+-AVB._GJ$',
-        
-        r'^AVB.-.A\d+$',
-        r'^AVB.-.B\d+$',
-        
-        r'^AVA.-.D\d+$', #Disconnect because not in first subunit model
-        
-        
-        #Disconect connections not in Izquierdo's connectome
-        r'^DA\d+-DB\d+$',
-        r'^DB\d+-DA\d+$',
-        r'^VB\d+-VA\d+$',
         #'''
+        
         
         
     ]    
     conn_polarity_override = {
-        r'^AS\d+-VD\d+$': 'inh',
-        r'^DB\d+-DD\d+$': 'inh',
-        r'^DB\d+-AS\d+$': 'inh',
-        r'^DB\d+-VD\d+$': 'inh',
-        #'DA1-VD2': 'inh',
-        #'DA2-VD1': 'inh',
-        r'^VB\d+-VD\d+$': 'inh',
-        r'^VD\d+-VA\d+$': 'inh',
+        #### NEW CIRCUIT ####
         r'^VA\d+-VD\d+$': 'inh',
         
-        #r'^VD\d+-DB\d+$': 'inh',
+        r'^DA\d+-DD\d+$': 'inh',
+        r'^AS\d+-DD\d+$': 'inh',
+        r'^DB\d+-DD\d+$': 'inh',
+        
+        r'^AS\d+-VD\d+$': 'inh',
+        #VD-DD, VD-VA and VD-VB are already inhibitory
         
     }
     conn_number_override = {
@@ -176,6 +223,7 @@ def setup(parameter_set,
     #BACKWARD
     #'''
     start = 5000
+    dur = '350'
     for stim_num in range(total_stim):
         count = 7
         for muscle_num in range(7):
@@ -191,8 +239,8 @@ def setup(parameter_set,
                 mvlx = 'MVL%s' % (muscle_num + 1)
                 mvrx = 'MVR%s' % (muscle_num + 1)
 
-            startd = '%sms' % (start + 600 + 400 + stim_num * 800 + count * 30)
-            startv = '%sms' % (start + 600 + stim_num * 800 + count * 30)
+            startd = '%sms' % (start + 700 + 400 + stim_num * 800 + count * 30)
+            startv = '%sms' % (start + 700 + stim_num * 800 + count * 30)
 
             input_list.append((mdlx, startd, dur, amp))
             input_list.append((mdrx, startd, dur, amp))
@@ -205,8 +253,8 @@ def setup(parameter_set,
     # Interneuron STIMULATION
     #*************************
     #'''
-    input_list.append(('AVAL', '0ms', '4000ms', '15pA'))
-    input_list.append(('AVAR', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
     input_list.append(('AVAL', '5000ms', '4000ms', '15pA'))
     input_list.append(('AVAR', '5000ms', '4000ms', '15pA'))
     #'''
@@ -218,10 +266,10 @@ def setup(parameter_set,
 
     # Sinusoidal Input
     #'''
-    sine_input_list.append(('DB1', '0ms', '4000ms', '1.5pA', '800ms')) #AMP: 2pA seems to overstimulate
-    sine_input_list.append(('VB1', '0ms', '4000ms', '1.5pA', '800ms')) # CHANGE THIS TO 6000 ms
-    sine_input_list.append(('DA9', '5000ms', '4000ms', '-2.5pA', '800ms'))
-    sine_input_list.append(('VA12', '5000ms', '4000ms', '2.5pA', '800ms'))
+    sine_input_list.append(('DB1', '0ms', '5000ms', '1.5pA', '800ms')) 
+    sine_input_list.append(('VB1', '0ms', '5000ms', '1.5pA', '800ms')) 
+    sine_input_list.append(('DA9', '5000ms', '5000ms', '-1.5pA', '800ms'))
+    sine_input_list.append(('VA12', '5000ms', '5000ms', '1.5pA', '800ms'))
     
     
     
@@ -231,33 +279,46 @@ def setup(parameter_set,
         
         'mirrored_elec_conn_params': {
             
+            #Connections to DB1 and VB1 have a HIGHER conductance
+            r'^AVB._to_.B1_GJ$_elec_syn_gbase': '0.005 nS',
             
-            r'^AVB._to_.B\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            r'^AVA._to_DA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            r'^AVA._to_VA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            # If I remove the chemical cs to AS, the network is understimulated, I need more power of electrical cs (0.001 - 0.005)
-            #This results in a very unusual diagram, it is overestimulated in the last portion. 
-            #Reduce this (0.001 - 0,003)
+            #Connections to rest of DB and VB have a LOWER conductance 
+            r'^AVB._to_.B[2-9]\_GJ$_elec_syn_gbase': '0.001 nS', 
+            r'^AVB._to_.B[1-9][0-9]\_GJ$_elec_syn_gbase': '0.001 nS',
             
-            # Changed from 3pA sine to 1.5pA sine, and changed from 0,001 nS GJ to 0,003 nS
             
-            r'^DB\d+_to_DB\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            r'^VB\d+_to_VB\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            #Connections to DA9 and VA12 have a HIGHER conductance
+            r'^AVA._to_DA9_GJ$_elec_syn_gbase': '0.005 nS', 
+            r'^AVA._to_VA12_GJ$_elec_syn_gbase': '0.005 nS',
             
-            r'^DA\d+_to_DA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            r'^VA\d+_to_VA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            #Connections to rest of DA and VA have LOWER conductance
+            r'^AVA._to_DA[1-8]\_GJ$_elec_syn_gbase': '0.001 nS', 
+            r'^AVA._to_VA[1-9][0-1]?\_GJ$_elec_syn_gbase': '0.001 nS',
+
+            
+            r'^.B\d+_to_.B\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            r'^.A\d+_to_.A\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            r'^.D\d+_to_.D\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            r'^AS\d+_to_AS\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            
+            r'^VA\d+_to_DA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            r'^VA\d+_to_VD\d+\_GJ$_elec_syn_gbase': '0.001 nS',
         },
         
         'initial_memb_pot': '-50 mV',
         
+        ##### Adjustments ######
+        r'^DA\d+_to_DB\d+$_exc_syn_conductance': '0.2 nS',
+        
+        r'^DB\d+_to_VD\d+$_exc_syn_conductance': '0.2 nS',        
+        
         #*********************************
         # Connections between units (chemical)
         #*********************************
-        
-        
-        # The base exc_syn_conductance: '0.49 nS'
-        #r'^AVA._to_AS\d+$_exc_syn_conductance': '0.2 nS',
-        
         
         
         #Connect synaptically VB1 to VB2 and so on
@@ -308,7 +369,7 @@ def setup(parameter_set,
         
         'neuron_to_muscle_exc_syn_vth': '37 mV',
         'neuron_to_muscle_inh_syn_conductance': '0.6 nS',
-        'neuron_to_neuron_inh_syn_conductance': '0.2 nS',
+        #'neuron_to_neuron_inh_syn_conductance': '0.2 nS',
         
         'AVBR_to_MVL16_exc_syn_conductance': '0 nS',
         'ca_conc_decay_time_muscle': '60.8 ms',
