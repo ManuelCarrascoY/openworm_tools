@@ -160,9 +160,8 @@ def setup(parameter_set,
         
         #'''
         
-        
-        
     ]    
+    
     conn_polarity_override = {
         #### NEW CIRCUIT ####
         r'^VA\d+-VD\d+$': 'inh',
@@ -192,7 +191,7 @@ def setup(parameter_set,
     #*************************
     
     #FORWARD
-    #'''
+    
     amp = '4pA'
     dur = '250ms'
     total_time = 4000
@@ -218,12 +217,12 @@ def setup(parameter_set,
             if muscle_num != 6:
                 input_list.append((mvlx, startv, dur, amp))
                 input_list.append((mvrx, startv, dur, amp))
-    #'''
+    
     
     #BACKWARD
-    #'''
+    
     start = 5000
-    dur = '350'
+    dur = '300ms'
     for stim_num in range(total_stim):
         count = 7
         for muscle_num in range(7):
@@ -247,7 +246,7 @@ def setup(parameter_set,
             if muscle_num != 6:
                 input_list.append((mvlx, startv, dur, amp))
                 input_list.append((mvrx, startv, dur, amp))
-    #'''            
+                
     
     #*************************
     # Interneuron STIMULATION
@@ -355,6 +354,7 @@ def setup(parameter_set,
         r'^DA\d+_to_DA\d+$_exc_syn_erev': '10 mV',
         #'''
         
+        
         #Neuro - Muscular Junction Parameters
         'neuron_to_muscle_exc_syn_conductance': '0.5 nS',
         r'^DB\d+_to_MDL\d+$_exc_syn_conductance': '0.4 nS',
@@ -370,6 +370,7 @@ def setup(parameter_set,
         'neuron_to_muscle_exc_syn_vth': '37 mV',
         'neuron_to_muscle_inh_syn_conductance': '0.6 nS',
         #'neuron_to_neuron_inh_syn_conductance': '0.2 nS',
+        
         
         'AVBR_to_MVL16_exc_syn_conductance': '0 nS',
         'ca_conc_decay_time_muscle': '60.8 ms',

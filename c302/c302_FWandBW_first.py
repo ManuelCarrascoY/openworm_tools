@@ -60,6 +60,7 @@ def setup(parameter_set,
     ]
     conns_to_exclude = [
         
+        
         'VB2-VB4_GJ',
         'VB4-VB2_GJ',
         
@@ -152,6 +153,22 @@ def setup(parameter_set,
         r'^VA\d+-DA\d+$',
         r'^VA\d+-AS\d+$',
         
+        ###############################################
+        # Remove connections going forward in DA and VA
+        ###############################################
+        
+        #Forward connections in DA-VA
+        'DA3-DA4',
+        'DA2-DA3',
+        'VA2-VA3',
+        'VA3-VA4',
+        'VA5-VA6',
+        'DA9-VA12',
+        'VA12-DA8',
+        'VA12-DA9',
+        'VA1-DA2',
+        
+        
         #'''
     ]    
     conn_polarity_override = {
@@ -173,6 +190,18 @@ def setup(parameter_set,
         #r'^DB\d+-DD\d+$': 'inh',
         #r'^VB\d+-VD\d+$': 'inh',
                 
+    }
+    conn_polarity_override = {
+        #### NEW CIRCUIT ####
+        r'^VA\d+-VD\d+$': 'inh',
+        
+        r'^DA\d+-DD\d+$': 'inh',
+        r'^AS\d+-DD\d+$': 'inh',
+        r'^DB\d+-DD\d+$': 'inh',
+        
+        r'^AS\d+-VD\d+$': 'inh',
+        #VD-DD, VD-VA and VD-VB are already inhibitory
+        
     }
     
     #conn_polarity_override = {}
@@ -214,43 +243,15 @@ def setup(parameter_set,
     # DB1 and VB1 STIMULATION
     #*************************
 
-    # OPTION A: Square steps Input
-    #'''
-    d_v_delay = 400
-
-    start = 190
-    motor_dur = '250ms'
-    amplitude = 0.9
-    
-    input_list.append(('DB1', '%sms'%(start), motor_dur, '%spA' %amplitude))
-    input_list.append(('VB1', '%sms'%(start+d_v_delay), motor_dur, '%spA' %amplitude))
-    
-    input_list.append(('DA1', '%sms'%(start), motor_dur, '%spA' %amplitude))
-    input_list.append(('VA1', '%sms'%(start+d_v_delay), motor_dur, '%spA' %amplitude))
-    
-    i = start + 2 * d_v_delay
-    j = start + 3 * d_v_delay
-    for pulse_num in range(1,20):
-        input_list.append(('DB1', '%sms'%i, motor_dur, '%spA' %amplitude))
-        input_list.append(('VB1', '%sms'%j, motor_dur, '%spA' %amplitude))
-        input_list.append(('DA1', '%sms'%i, motor_dur, '%spA' %amplitude))
-        input_list.append(('VA1', '%sms'%j, motor_dur, '%spA' %amplitude))
-        i += d_v_delay * 2
-        j += d_v_delay * 2
-    #'''
-    
-    
-    # OPTION C: Square + & - step inputs
-    
     
     
     
     # OPTION B: Sinusoidal Input
-    '''
-    sine_input_list.append(('DB1', '0ms', '20000ms', '1pA', '800ms'))
-    sine_input_list.append(('VB1', '0ms', '20000ms', '1pA', '800ms'))
-    sine_input_list.append(('DA1', '0ms', '20000ms', '1pA', '800ms'))
-    sine_input_list.append(('VA1', '0ms', '20000ms', '-1pA', '800ms'))
+    #'''
+    sine_input_list.append(('DB1', '0ms', '20000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('VB1', '0ms', '20000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('DA1', '0ms', '20000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('VA1', '0ms', '20000ms', '-1.5pA', '800ms'))
     #'''
     
 
@@ -259,13 +260,18 @@ def setup(parameter_set,
     param_overrides = {
         
         'mirrored_elec_conn_params': {
-            r'^AVB._to_DB\d+\_GJ$_elec_syn_gbase': '0.01 nS',
-            r'^AVB._to_VB\d+\_GJ$_elec_syn_gbase': '0.01 nS',
-            r'^AVA._to_DA\d+\_GJ$_elec_syn_gbase': '0.01 nS',
-            r'^AVA._to_VA\d+\_GJ$_elec_syn_gbase': '0.01 nS',
+            r'^AVB._to_DB\d+\_GJ$_elec_syn_gbase': '0.005 nS',
+            r'^AVB._to_VB\d+\_GJ$_elec_syn_gbase': '0.005 nS',
+            r'^AVA._to_DA\d+\_GJ$_elec_syn_gbase': '0.005 nS',
+            r'^AVA._to_VA\d+\_GJ$_elec_syn_gbase': '0.005 nS',
         },
         
         'initial_memb_pot': '-50 mV',
+        
+        ##### Adjustments ######
+        r'^DA\d+_to_DB\d+$_exc_syn_conductance': '0.2 nS',
+        
+        r'^DB\d+_to_VD\d+$_exc_syn_conductance': '0.2 nS',  
         
         
         'AVBR_to_MVL16_exc_syn_conductance': '0 nS',
