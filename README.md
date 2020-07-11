@@ -1,4 +1,20 @@
-# Tools for easy use of openworm framework
+# Tools for the use of OpenWorm
+
+In this repository you will find:
+* Shell scripts developed for using the OpenWorm framework under a docker container.
+* Jupyter Notebooks developed in Python 3 for interpreting the data. 
+* The files developed for the forward and backward locomotion model in *Caenorhabditis elegans*. 
+
+(The repository has been developed as part of my Bachelor Thesis Project: **Models of Neuromorphic Computing: Brain-body-environment simulation of Caenorhabditis elegans forward and backward locomotion**)
+
+---
+
+The results of the forward and backward locomotion model are the following: 
+
+![Forward locomotion](/images/FW_gif.gif)
+
+
+![Backward locomotion](/images/BW_gif.gif)
 
 This codes are used to edit the c302_reference.py scripts and run them inside a docker container by following some easy steps. 
 **1. Use c302 inside the container and represent the neuron and muscle activity**
