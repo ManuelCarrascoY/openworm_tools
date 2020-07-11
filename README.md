@@ -1,18 +1,10 @@
 # Tools for the use of OpenWorm
 
-The repository has been developed as part of my Bachelor Thesis Project: **Models of Neuromorphic Computing: Brain-body-environment simulation of *Caenorhabditis elegans* forward and backward locomotion**
+The repository has been developed as part of my Bachelor Thesis Project:
 
-<div class="row">
-  <div class="column">
-    <img src=./images/real_nematode.png width="250">
-  </div>
-  <div class="column">
-    <img src=./images/Logo_UC3M.png width="100">
-  </div>
-  <div class="column">
-    <img src=./images/OW.jpeg width="100">
-  </div>
-</div>
+UC3M | Bachelor Thesis Project
+:---:|:---:
+<img src=./images/Logo_UC3M.png width="100"> | **MODELS OF NEUROMORPHIC COMPUTING: <br> Brain-body-environment simulation of *Caenorhabditis elegans* forward and backward locomotion**
 
 In this repository you will find:
 * Shell scripts developed for using the OpenWorm framework under a docker container.
@@ -79,6 +71,10 @@ Okay, now we have the container created, we can attach to it using:
 Once within, run an `ls` command and make sure you can find the PyOpenWorn, c302, neuron, sibernetic, pyNeuroML, master_openworm.py and shared directories.
 To close the container type ´exit´, to escape the container use: *Ctrl+P* and *Ctrl+Q*. 
 
+Also check that GUI applications are running
+
+    xlogo #This should pop a window with a big 'X'
+
 Once the Container is build, if you want to close and erase it (note this will delete any work done inside that container):
 
     ./remove_container.sh -n ContainerName
@@ -88,40 +84,73 @@ Once the Container is build, if you want to close and erase it (note this will d
 
 In order to open GUI applications fron the docker container, follow these steps (you will need homebrew installed)
 1. Install XQuartz
-
-    brew cask install XQuartz
-
+```
+brew cask install XQuartz
+```
 2. Install Socat
-
-    brew install socat
-
+```
+brew install socat
+```
 3. Run socat (Check this [tutorial](https://www.youtube.com/watch?v=PKyj8sbZNYw))
+```
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+```
+4. Run the `build_container_OSX.sh` instead.
 
-    socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
-
-5. Run the `build_container_OSX.sh` instead.
-
+5. Chech that GUI applications are running by attaching to the container with `./attach_to_container`, and running inside the bash a simple logo: 
+```
+xlogo #This should pop a window with a big 'X'
+```
 ---
 
-# Use c302 for Neuron and Muscle Activity
+# c302: Neuron and Muscle Simulation
 
-Create your own network by modifying the *c302/c302_tutorial.py* file (WorkInProgress). Note that this script has to be done in python2, the openworm framework that still has issues when using python3. 
+To make a simulation using c302, I recommend following the instructions from the [c302 GitHub](https://github.com/openworm/c302).
 
-Run a simulation with the *c302/c302_IClamp.py*:
-**Using pyNeuroMl**
+Run them by attaching to the Docker container. Here is a file and package overview: 
 
-    ./run_pynml_c302.sh -n ContainerName -r Reference -p Parameters #Reference = IClamp, Parameters = A
+![c302 Diagram](./images/c302.png)
 
-**Using NEURON**
+I developed some tools to make a fast use of c302 from a jupyter notebook and plot the obtained data using MatPlotLib
+<img src=./images/matplotlib.png width="200">
 
-    ./run_nrn_c302.sh -n ContainerName -r Reference -p Parameters #Reference = IClamp, Parameters = A
+1. Go to the `c302/` 
+2. Check out the Python 2 commented script `c302/c302_tutorial.py`
+3. Build your own model!
+4. Check the Python 3 jupyter notebook `c302/c302.ipynb` to run the simulation and plot the data. 
 
-The resulting data files are stored in *c302/data/*
+Example of neuronal dynamics plots: 
+<img src=./images/first.png width="%80">
 
-### Reading the data in a Jupyter Notebook 
+# Sibernetic: Body and Environment Simulation 
 
-(WorkInProgress)
+Lastly, the Sibernetic simulator is designed to test the movement of your models. For this, you will need a model which produces motion for **all of the muscles** of the nematode. 
 
-## 2. Use c302 and Sibernetic together
+For the simulations seen in `videos`, the `c302/c302_FW_with_muscles.py` and the `c302/c302_BW_with_muscles.py` scripts were used. The forward and backward simulation could be achieved using the `c302/c302_FWandBW_with_muscles.py`. 
 
-(WorkInProgress)
+#### Run the Sibernetic simulator
+We will use the `master_openworm.py` inside the container. 
+
+1. Go to `shared/modified_master_openworm.py` and change the reference to the name of your model.
+```
+#Default is 15 ms of simulation time.
+sim_duration = 15.0 # We will also change later the duration, this is only 15ms
+if 'DURATION' in os.environ:
+    sim_duration = float(os.environ['DURATION'])
+
+DEFAULTS = {'duration': sim_duration,
+            'dt': 0.005,
+            'dtNrn': 0.05,
+            'logstep': 100,
+            'reference': 'FW', # Change this reference to the reference of your model
+            'c302params': 'C2',
+            'verbose': False,
+            'device': 'GPU',
+```
+2. Run in terminal: 
+
+    docker exec worm cp ./shared/modified_master_openworm.py ./master_openworm.py
+    docker exec worm python master_openworm.py
+    
+3. This simulation should take no longer than 15 minutes. Check that it finishes and run a simulation changing `sim_duration = 15000.0` (1.5 seconds)
+
