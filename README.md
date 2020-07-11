@@ -21,7 +21,7 @@ In this repository you will find:
 
 ---
 
-The results of the forward and backward locomotion model are the following: 
+Results of the forward and backward locomotion model: 
 
 ![Forward locomotion](/images/FW_gif.gif)
 
@@ -51,17 +51,17 @@ A [Docker container](https://www.docker.com/get-started) is an isolated working 
 
 ### Install Docker
 
-If you are a ubuntu user, you only need to run the following withing your terminal:
+If you are a ubuntu user, you only need to run the following commands within your terminal:
 
     git clone https://github.com/ManuelCarrascoY/openworm_tools.git
     cd openworm_tools/
     ./install_docker.sh
 
-This will install docker and login into you docker account. For Mac or Window users, make sure to follow the instructuions to install docker in your system from the [Docker website](https://www.docker.com/get-started)
+This will install docker and login into you docker account. For Mac or Window users, make sure to follow the instructuions to install docker in your system found in the [Docker website](https://www.docker.com/get-started).
 
 ### Use the Docker Container
 
-A container can be built with: 
+A container can be built with the shell script `build_container.sh`
 
     ./build_container.sh -n ContainerName #Set a name for the container
 
@@ -76,7 +76,7 @@ Okay, now we have the container created, we can attach to it using:
 
     ./attach_to_container.sh -n ContainerName
 
-Once within, run an ´ls´ command and make sure you can find the PyOpenWorn, c302, neuron, sibernetic, pyNeuroML, master_openworm.py and shared directories.
+Once within, run an `ls` command and make sure you can find the PyOpenWorn, c302, neuron, sibernetic, pyNeuroML, master_openworm.py and shared directories.
 To close the container type ´exit´, to escape the container use: *Ctrl+P* and *Ctrl+Q*. 
 
 Once the Container is build, if you want to close and erase it (note this will delete any work done inside that container):
@@ -99,68 +99,11 @@ In order to open GUI applications fron the docker container, follow these steps 
 
     socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
 
-5. Run the ´build_container_OSX.sh´ instead.
+5. Run the `build_container_OSX.sh` instead.
 
 ---
 
-
-This codes are used to edit the c302_reference.py scripts and run them inside a docker container by following some easy steps. 
-**1. Use c302 inside the container and represent the neuron and muscle activity**
-**2. Run a complete simulation using c302 and Sibernetic**
-## Quick Start
-
-### Install Docker
-
-If you are a ubuntu user, you only need to run the following: 
-
-    git clone https://github.com/ManuelCarrascoY/openworm_tools.git
-    cd openworm_tools/
-    ./install_docker.sh
-
-This will install docker and login into you docker account. For Mac or Window users, make sure to follow the instructuions to install docker in your system from the [Docker website](https://www.docker.com/get-started)
-
-### Install Openworm
-
-Clone the Openworm repository and the Openworm docker image by executing the following: 
-
-    ./install_openworm.sh
-
-### Use the Docker Container
-
-A container can be built with: 
-
-    ./build_container.sh -n ContainerName #Set a name for the container
-
-Once the Container is build, if you want to close and erase it (not this will delete all work done on that container)
-
-    ./remove_container.sh -n ContainerName
-
-If you want to use the container and explore what is inside, you can attach to it:
-
-    ./attach_to_container.sh -n ContainerName
-
-**Mac Users**: 
-
-In order to open GUI applications fron the docker container, follow these steps (you will need homebrew installed)
-1. Install XQuartz
-
-    brew cask install XQuartz
-
-2. Install Socat
-
-    brew install socat
-
-3. Run socat (Check this [tutorial](https://www.youtube.com/watch?v=PKyj8sbZNYw))
-
-    socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
-
-4. Find the IP of your system (should appeart under 'inet 192.168...') 
-
-    ifconfig en0
-
-5. Change in *build_container_OSX.sh* the DISPLAY IP
-
-## 1. Use c302 to represent neuron and muscle activity
+# Use c302 for Neuron and Muscle Activity
 
 Create your own network by modifying the *c302/c302_tutorial.py* file (WorkInProgress). Note that this script has to be done in python2, the openworm framework that still has issues when using python3. 
 
