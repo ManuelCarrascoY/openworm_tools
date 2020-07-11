@@ -1,10 +1,7 @@
 import sys
 import os
-
 sys.path.insert(0, os.path.abspath('.'))
-
 import c302
-
 import neuroml.writers as writers
 
 range_incl = lambda start, end:range(start, end + 1)
@@ -23,11 +20,7 @@ def setup(parameter_set,
     exec ('from parameters_%s import ParameterisedModel' % parameter_set, globals())
     params = ParameterisedModel()
 
-    params.set_bioparameter("unphysiological_offset_current", "0pA", "Testing TapWithdrawal", "0")
-    params.set_bioparameter("unphysiological_offset_current_del", "0 ms", "Testing TapWithdrawal", "0")
-    params.set_bioparameter("unphysiological_offset_current_dur", "2000 ms", "Testing TapWithdrawal", "0")
-    
-    '''
+    #'''
     VA_motors = ["VA%s" % c for c in range_incl(1, 12)]
     VB_motors = ["VB%s" % c for c in range_incl(1, 11)]
     DA_motors = ["DA%s" % c for c in range_incl(1, 9)]
@@ -36,219 +29,285 @@ def setup(parameter_set,
     VD_motors = ["VD%s" % c for c in range_incl(1, 13)]
     AS_motors = ["AS%s" % c for c in range_incl(1, 11)]
     #'''
-    #'''
-    units_start = 1
-    units_end = 5
-    VA_motors = ["VA%s" % c for c in range_incl(units_start, units_end)]
-    VB_motors = ["VB%s" % c for c in range_incl(units_start, units_end)]
-    DA_motors = ["DA%s" % c for c in range_incl(units_start, units_end)]
-    DB_motors = ["DB%s" % c for c in range_incl(units_start, units_end)]
-    DD_motors = ["DD%s" % c for c in range_incl(units_start, units_end)]
-    VD_motors = ["VD%s" % c for c in range_incl(units_start, units_end)]
-    AS_motors = ["AS%s" % c for c in range_incl(units_start, units_end)] 
-    #'''
+    motors = list(VA_motors + VB_motors + AS_motors + DA_motors + DB_motors + VD_motors + DD_motors)
+    
+    
+    inters = ['AVBL', 'AVBR', 'AVAL', 'AVAR']
+    #inters = ['AVBL', 'AVBR']
 
-    cells = list(['AVBL', 'AVBR'] + DB_motors + VD_motors + VB_motors + DD_motors)
+    cells = list(motors + inters)
     
     muscles_to_include = []
 
     cells_to_stimulate = []
 
-    cells_to_plot = list(cells)
+
+    cells_to_plot = cells
     reference = "c302_%s_FW" % parameter_set
 
 
-    conns_to_include = []
+    conns_to_include = [
+    ]
     conns_to_exclude = [
+        
         'VB2-VB4_GJ',
         'VB4-VB2_GJ',
+        
+        
+        #########################################
+        # Remove unwanted interneuron connections
+        #########################################
+        
+        # Disconnect the AVA and AVB interneurons
+        r'^AVB.-AVA.$',
+        r'^AVA.-AVB.$',
+        r'^AVB.-AVA._GJ$',
+        r'^AVA.-AVB._GJ$',
+        
+        # Disconnect chemical stimulation from AVA and AVB
+        r'^AVB.-.A\d+$', 
+        r'^AVB.-.B\d+$',
+        r'^AVB.-.D\d+$',
+        r'^AVB.-AS\d+$',
+        r'^AVA.-.A\d+$',
+        r'^AVA.-.B\d+$',
+        r'^AVA.-.D\d+$',
+        r'^AVA.-AS\d+$',
+        
+        # Disconnect AVA and AVB gap junctions not pressent. 
+        r'^AVB.-.A\d+_GJ$',
+        r'^AVB.-AS\d+_GJ$',
+        r'^AVB.-.D\d+_GJ$',
+        
+        r'^AVA.-.B\d+_GJ$',
+        r'^AVA.-AS\d+_GJ$',
+        r'^AVA.-.D\d+_GJ$',
+        
+        # Disconnect feedback GJ into AVA and AVB. 
+        
+        r'^..\d+-AV.._GJ$',
+        
+        
+        #########################################################
+        # Remove connections not present in Haspel and O'Donovan
+        #########################################################
+        
+        #'''
+        r'^AS\d+-.B\d+$',
+        r'^AS\d+-VA\d+$',
+        r'^AS\d+-DD\d+$',
+        r'^AS\d+-..\d+_GJ$',
+        r'^..\d+-AS\d+_GJ$',
+        
+        r'^DA\d+-AS\d+$',
+        r'^DA\d+-DD\d+$',
+        r'^DA\d+-VB\d+$',
+        r'^DA\d+-VA\d+$',
+        r'^DA\d+-AS\d+$',
+        r'^DA\d+-.B\d+_GJ$',
+        r'^DA\d+-.D\d+_GJ$',
+        r'^.B\d+-DA\d+_GJ$',
+        r'^.D\d+-DA\d+_GJ$',
+        
+        r'^DB\d+-.A\d+$',
+        r'^DB\d+-VB\d+$',
+        r'^DB\d+-.A\d+_GJ$',
+        r'^DB\d+-.D\d+_GJ$',
+        r'^DB\d+-VB\d+_GJ$',
+        r'^.A\d+-DB\d+_GJ$',
+        r'^.D\d+-DB\d+_GJ$',
+        r'^VB\d+-DB\d+_GJ$',
+        
+        r'^DD\d+-..\d+$',
+        r'^DD\d+-VD\d+_GJ$',
+        r'^DD\d+-.B\d+_GJ$',
+        r'^DD\d+-.A\d+_GJ$',
+        r'^VD\d+-DD\d+_GJ$',
+        r'^.B\d+-DD\d+_GJ$',
+        r'^.A\d+-DD\d+_GJ$',
+        
+        r'^VD\d+-D.\d+$',
+        r'^VD\d+-AS\d+$',
+        r'^VD\d+-VB\d+_GJ$',
+        r'^VB\d+-VD\d+_GJ$',
+        
+        r'^VB\d+-DB\d+$',
+        r'^VB\d+-.A\d+$',
+        r'^VB\d+-AS\d+$',
+        r'^VB\d+-VD\d+$',
+        r'^VB\d+-VA\d+_GJ$',
+        r'^VA\d+-VB\d+_GJ$',
+        
+        r'^VA\d+-.B\d+$',
+        r'^VA\d+-DA\d+$',
+        r'^VA\d+-AS\d+$',
+        
+        ###############################################
+        # Remove connections going forward in DA and VA
+        ###############################################
+        
+        #Forward connections in DA-VA
+        'DA3-DA4',
+        'DA2-DA3',
+        'VA2-VA3',
+        'VA3-VA4',
+        'VA5-VA6',
+        'DA9-VA12',
+        'VA12-DA8',
+        'VA12-DA9',
+        'VA1-DA2',
+        
+        
+        #'''
+        
+        
     ]    
     conn_polarity_override = {
+        #Inhibitory in Olivares
+        
+        r'^AS\d+-VD\d+$': 'inh',
+        r'^DB\d+-AS\d+$': 'inh',
+        r'^DB\d+-VD\d+$': 'inh',
+        r'^VD\d+-VA\d+$': 'inh',
+        r'^VA\d+-VD\d+$': 'inh',
+        
+        #Excitatory in Olivares
+        
+        r'^VD\d+-VB\d+$': 'exc',
+        
+        #Inhibitory in LUNG
+        
+        #r'^DB\d+-DD\d+$': 'inh',
+        #r'^VB\d+-VD\d+$': 'inh',
+        
+    }
+    conn_polarity_override = {
+        #### NEW CIRCUIT ####
+        r'^VA\d+-VD\d+$': 'inh',
+        
+        r'^DA\d+-DD\d+$': 'inh',
+        r'^AS\d+-DD\d+$': 'inh',
         r'^DB\d+-DD\d+$': 'inh',
-        r'^VB\d+-VD\d+$': 'inh',
+        
+        r'^AS\d+-VD\d+$': 'inh',
+        #VD-DD, VD-VA and VD-VB are already inhibitory
+        
     }
     conn_number_override = {
         '^.+-.+$': 1,
     }
     
+    #*********
+    # INPUTS
+    #*********
+    
     input_list = []
     sine_input_list = []
-
-    '''dur = '250ms'
-    amp = '3pA'
-    for muscle_num in range(24):
-        mdlx = 'MDL0%s' % (muscle_num + 1)
-        mdrx = 'MDR0%s' % (muscle_num + 1)
-        #mvlx = 'MVL0%s' % (muscle_num + 1)
-        #mvrx = 'MVR0%s' % (muscle_num + 1)
-        
-        if muscle_num >= 9:
-            mdlx = 'MDL%s' % (muscle_num + 1)
-            mdrx = 'MDR%s' % (muscle_num + 1)
-            #mvlx = 'MVL%s' % (muscle_num + 1)
-            #mvrx = 'MVR%s' % (muscle_num + 1)
-        
-        startd = '%sms' % (muscle_num * 10)
-        #startv = '%sms' % ((stim_num * 800 + 400) + muscle_num * 30)
-        
-        input_list.append((mdlx, startd, dur, amp))
-        input_list.append((mdrx, startd, dur, amp))'''
-        
-
- 
+    ramp_input_list = []
     
-
-    '''
-    input_list.append(('MVR10', '0ms', '150ms', '1pA'))
-    input_list.append(('MVR11', '0ms', '150ms', '2pA'))
-    input_list.append(('MVR12', '0ms', '150ms', '3pA'))
-    input_list.append(('MVR13', '0ms', '150ms', '3pA'))
-    input_list.append(('MVR14', '0ms', '150ms', '2pA'))
-    input_list.append(('MVR15', '0ms', '150ms', '1pA'))
-    
-    input_list.append(('MVL10', '0ms', '150ms', '1pA'))
-    input_list.append(('MVL11', '0ms', '150ms', '2pA'))
-    input_list.append(('MVL12', '0ms', '150ms', '3pA'))
-    input_list.append(('MVL13', '0ms', '150ms', '3pA'))
-    input_list.append(('MVL14', '0ms', '150ms', '2pA'))
-    input_list.append(('MVL15', '0ms', '150ms', '1pA'))
-
-    input_list.append(('MDL21', '0ms', '250ms', '3pA'))
-    input_list.append(('MDL22', '0ms', '250ms', '3pA'))
-    input_list.append(('MDR21', '0ms', '250ms', '3pA'))
-    input_list.append(('MDR22', '0ms', '250ms', '3pA'))
-    '''
-    '''
-    amp = '4pA'
-    dur = '250ms'
-
-    for stim_num in range(15):
-        for muscle_num in range(7):
-            mdlx = 'MDL0%s' % (muscle_num + 1)
-            mdrx = 'MDR0%s' % (muscle_num + 1)
-            mvlx = 'MVL0%s' % (muscle_num + 1)
-            mvrx = 'MVR0%s' % (muscle_num + 1)
-            
-            if muscle_num >= 9:
-                mdlx = 'MDL%s' % (muscle_num + 1)
-                mdrx = 'MDR%s' % (muscle_num + 1)
-                mvlx = 'MVL%s' % (muscle_num + 1)
-                mvrx = 'MVR%s' % (muscle_num + 1)
-            
-            startd = '%sms' % (stim_num * 800 + muscle_num * 30)
-            startv = '%sms' % ((stim_num * 800 + 400) + muscle_num * 30)
-            
-            input_list.append((mdlx, startd, dur, amp))
-            input_list.append((mdrx, startd, dur, amp))
-            if muscle_num != 6:
-                input_list.append((mvlx, startv, dur, amp))
-                input_list.append((mvrx, startv, dur, amp))
-    '''
-    
-    #Interneuron
-    
+    #*************************
+    # Interneuron STIMULATION
+    #*************************
+    #'''
     input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
     input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
-    
-    # Motoneuron square signal
-    #'''
-    d_v_delay = 400
-
-    start = 190
-    motor_dur = '250ms'
-
-    
-    input_list.append(('DB1', '%sms'%(start), motor_dur, '3pA'))
-    input_list.append(('VB1', '%sms'%(start+d_v_delay), motor_dur, '3pA'))
-
-    i = start + 2 * d_v_delay
-    j = start + 3 * d_v_delay
-    for pulse_num in range(1,15):
-        input_list.append(('DB1', '%sms'%i, motor_dur, '3pA'))
-        input_list.append(('VB1', '%sms'%j, motor_dur, '3pA'))
-        i += d_v_delay * 2
-        j += d_v_delay * 2
     #'''
     
-    '''
-    sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms'))
+    
+    #*************************
+    # DB1 and VB1 STIMULATION
+    #*************************
+
+    # Sinusoidal Input
+    #'''
+    sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms')) #AMP: 2pA seems to overstimulate
     sine_input_list.append(('VB1', '0ms', '15000ms', '1.5pA', '800ms'))
-    input_list.append(('DB1', '0ms', '15000ms', '1.5pA'))
-    input_list.append(('VB1', '0ms', '15000ms', '1.5pA'))
-    
-    #'''
 
+    
     config_param_overrides['input'] = input_list
 
     param_overrides = {
+        
         'mirrored_elec_conn_params': {
             
-            r'^AVB._to_DB\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            r'^AVB._to_VB\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            #Connections to DB1 and VB1 have a HIGHER conductance
+            r'^AVB._to_.B1_GJ$_elec_syn_gbase': '0.005 nS',
             
-            r'^DB\d+_to_DB\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            #'^DB\d+_to_DB\d+\_GJ$_elec_syn_p_gbase': '0.08 nS',
-            #'^DB\d+_to_DB\d+\_GJ$_elec_syn_sigma': '0.2 per_mV',
-            #'^DB\d+_to_DB\d+\_GJ$_elec_syn_mu': '-20 mV',
+            #Connections to rest of DB and VB have a LOWER conductance 
+            r'^AVB._to_.B[2-9]\_GJ$_elec_syn_gbase': '0.001 nS', 
+            r'^AVB._to_.B[1-9][0-9]\_GJ$_elec_syn_gbase': '0.001 nS',
             
-            r'^VB\d+_to_VB\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            #'^VB\d+_to_VB\d+\_GJ$_elec_syn_p_gbase': '0.1 nS',
-            #'^VB\d+_to_VB\d+\_GJ$_elec_syn_sigma': '0.3 per_mV',
-            #'^VB\d+_to_VB\d+\_GJ$_elec_syn_mu': '-30 mV',
             
-            #'VB2_to_VB4_elec_syn_gbase': '0 nS',
+            #Connections to DA9 and VA12 have a HIGHER conductance
+            r'^AVA._to_DA9_GJ$_elec_syn_gbase': '0.005 nS', 
+            r'^AVA._to_VA12_GJ$_elec_syn_gbase': '0.005 nS',
             
-            r'^DB\d+_to_VB\d+\_GJ$_elec_syn_gbase': '0 nS',
-            r'^DB\d+_to_DD\d+\_GJ$_elec_syn_gbase': '0 nS',
-            r'^VB\d+_to_VD\d+\_GJ$_elec_syn_gbase': '0 nS',
-            #'^VD\d+_to_DD\d+\_GJ$_elec_syn_gbase': '0 nS',
+            #Connections to rest of DA and VA have LOWER conductance
+            r'^AVA._to_DA[1-8]\_GJ$_elec_syn_gbase': '0.001 nS', 
+            r'^AVA._to_VA[1-9][0-1]?\_GJ$_elec_syn_gbase': '0.001 nS',
+
             
-            'DD1_to_MVL08_elec_syn_gbase': '0 nS',
-            'VD2_to_MDL09_elec_syn_gbase': '0 nS',
+            r'^.B\d+_to_.B\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            r'^.A\d+_to_.A\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            r'^.D\d+_to_.D\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            r'^AS\d+_to_AS\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
+            
+            r'^VA\d+_to_DA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            r'^VA\d+_to_VD\d+\_GJ$_elec_syn_gbase': '0.001 nS',
+            
         },
         
-        r'^VB\d+_to_VB\d+$_exc_syn_conductance': '18 nS',
+        'initial_memb_pot': '-50 mV',
+        
+        ##### Adjustments ######
+        r'^DA\d+_to_DB\d+$_exc_syn_conductance': '0.2 nS',
+        
+        r'^DB\d+_to_VD\d+$_exc_syn_conductance': '0.2 nS',
+
+        
+        #*********************************
+        # Connections between units (chemical)
+        #*********************************
+        
+        
+        
+        #Connect synaptically VB1 to VB2 and so on
+        r'^VB\d+_to_VB\d+$_exc_syn_conductance': '30 nS',
         r'^VB\d+_to_VB\d+$_exc_syn_ar': '0.19 per_s',
         r'^VB\d+_to_VB\d+$_exc_syn_ad': '73 per_s',
         r'^VB\d+_to_VB\d+$_exc_syn_beta': '2.81 per_mV',
         r'^VB\d+_to_VB\d+$_exc_syn_vth': '-22 mV',
         r'^VB\d+_to_VB\d+$_exc_syn_erev': '10 mV',
         
-        r'^DB\d+_to_DB\d+$_exc_syn_conductance': '20 nS',
+        #Connect synaptically DB1 to DB2 and so on
+        r'^DB\d+_to_DB\d+$_exc_syn_conductance': '30 nS',
         r'^DB\d+_to_DB\d+$_exc_syn_ar': '0.08 per_s',
         r'^DB\d+_to_DB\d+$_exc_syn_ad': '18 per_s',
         r'^DB\d+_to_DB\d+$_exc_syn_beta': '0.21 per_mV',
         r'^DB\d+_to_DB\d+$_exc_syn_vth': '-10 mV',
         r'^DB\d+_to_DB\d+$_exc_syn_erev': '10 mV',
         
-        'initial_memb_pot': '-50 mV',
+        #'''
+        #Connect synaptically VA1 to VA2 and so on
+        r'^VA\d+_to_VA\d+$_exc_syn_conductance': '18 nS',
+        r'^VA\d+_to_VA\d+$_exc_syn_ar': '0.19 per_s',
+        r'^VA\d+_to_VA\d+$_exc_syn_ad': '73 per_s',
+        r'^VA\d+_to_VA\d+$_exc_syn_beta': '2.81 per_mV',
+        r'^VA\d+_to_VA\d+$_exc_syn_vth': '-22 mV',
+        r'^VA\d+_to_VA\d+$_exc_syn_erev': '10 mV',
         
-        'AVBR_to_DB4_exc_syn_conductance': '0 nS',
-        
-        #'VB4_to_VB5_exc_syn_conductance': '0 nS',
-        'AVBL_to_VB2_exc_syn_conductance': '0 nS',
-        
-        'AVBR_to_VD3_exc_syn_conductance': '0 nS',
-        
-        
-        #'^DB\d+_to_DD\d+$_exc_syn_conductance': '0 nS',
-        #'^DD\d+_to_DB\d+$_inh_syn_conductance': '0 nS',
-        #'^VB\d+_to_VD\d+$_exc_syn_conductance': '0 nS',
-        #'^VD\d+_to_VB\d+$_inh_syn_conductance': '0 nS',
-        
-        'DD1_to_VB2_inh_syn_conductance': '0 nS',
-        
-        'neuron_to_muscle_exc_syn_conductance': '0.5 nS',
-        r'^DB\d+_to_MDL\d+$_exc_syn_conductance': '0.4 nS',
-        r'^DB\d+_to_MDR\d+$_exc_syn_conductance': '0.4 nS',
-        r'^VB\d+_to_MVL\d+$_exc_syn_conductance': '0.6 nS',
-        r'^VB\d+_to_MVR\d+$_exc_syn_conductance': '0.6 nS',
-        'neuron_to_muscle_exc_syn_vth': '37 mV',
-        'neuron_to_muscle_inh_syn_conductance': '0.6 nS',
-        'neuron_to_neuron_inh_syn_conductance': '0.2 nS',
-        
-        #'DB2_to_MDL11_exc_syn_conductance': '1 nS',
-        
+        #Connect synaptically DB1 to DB2 and so on
+        r'^DA\d+_to_DA\d+$_exc_syn_conductance': '20 nS',
+        r'^DA\d+_to_DA\d+$_exc_syn_ar': '0.08 per_s',
+        r'^DA\d+_to_DA\d+$_exc_syn_ad': '18 per_s',
+        r'^DA\d+_to_DA\d+$_exc_syn_beta': '0.21 per_mV',
+        r'^DA\d+_to_DA\d+$_exc_syn_vth': '-10 mV',
+        r'^DA\d+_to_DA\d+$_exc_syn_erev': '10 mV',
+        #'''
         
         'AVBR_to_MVL16_exc_syn_conductance': '0 nS',
         'ca_conc_decay_time_muscle': '60.8 ms',
@@ -278,14 +337,22 @@ def setup(parameter_set,
 
         #if config_param_overrides.has_key('input'):
         #    input_list = config_param_overrides['input']
-
+        
         for stim_input in input_list:
             cell, start, dur, current = stim_input
             c302.add_new_input(nml_doc, cell, start, dur, current, params)
-            
+        
         for sine_stim_input in sine_input_list:
             cell, delay, dur, amp, period = sine_stim_input
             c302.add_new_sinusoidal_input(nml_doc, cell, delay, dur, amp, period, params)
+        
+        for ramp_stim_input in ramp_input_list:
+            cell, delay, dur, start_amp, finish_amp, base_amp = ramp_stim_input
+            c302.add_new_ramp_input(nml_doc, cell, delay, dur, start_amp, finish_amp, base_amp, params)
+
+        #c302.add_new_input(nml_doc, cell='VB1', delay="1200ms", duration="1000ms", amplitude="1pA", params=params)
+        #c302.add_new_input(nml_doc, cell='VB1', delay="0ms", duration="2000ms", amplitude="1.5pA", params=params)
+        
 
         nml_file = target_directory + '/' + reference + '.net.nml'
         writers.NeuroMLWriter.write(nml_doc, nml_file)  # Write over network file written above...
@@ -298,6 +365,7 @@ def setup(parameter_set,
 
 if __name__ == '__main__':
     parameter_set = sys.argv[1] if len(sys.argv) == 2 else 'C2'
+    #data_reader = sys.argv[2] if len(sys.argv) == 3 else 'My_Reader'
     data_reader = sys.argv[2] if len(sys.argv) == 3 else 'UpdatedSpreadsheetDataReader2'
 
     setup(parameter_set, generate=True, data_reader=data_reader)

@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# RUN a python script inside c302 (USING NEURON)
-# Check you have all the folders
-ls
+# Shell script to run a neuronal simulation using NEURON
+# Takes the 'c302/c302_reference.py' in host and executes it within the docker container. 
+# Has 2 flags: '-r NameOfReference' and 'p Parameters'. 
+# By default, if nothing is stated, NameOfReference = 'IClamp' and Parameters = 'A'
+
+ls #Check all of the folders of the container are there
 
 while getopts ":r:p:" opt; do
   case $opt in
@@ -31,19 +34,18 @@ else # Parameters are set
     PARAMS="$parameters"
 fi
 
-# RUN THE SCRIPT IN C302
+# RUN THE SCRIPT IN C302 FOR NEURON SIMULATION
 
 cd c302
-#sudo python setup.py install
 python c302/c302_${NAME}.py $PARAMS
 
-# Try with Neuron
 cd examples
-pynml LEMS_c302_${PARAMS}_${NAME}.xml -neuron
-nrnivmodl
-nrngui LEMS_c302_${PARAMS}_${NAME}_nrn.py
-pynml c302_${PARAMS}_${NAME}.net.nml -graph 2c 
+pynml LEMS_c302_${PARAMS}_${NAME}.xml -neuron # Generate the Neuron files
+nrnivmodl # Compile the mod files (used for cell/ion channel definition)
+nrngui LEMS_c302_${PARAMS}_${NAME}_nrn.py # Run the main Python for the simulation using Neuron
+pynml c302_${PARAMS}_${NAME}.net.nml -graph 2c # Plot the connections of the simulation
 
+# Move the generated files to the shared folder
 mkdir ../../shared/data/c302_${PARAMS}_${NAME}_nrn
 cp c302_${PARAMS}_${NAME}.dat \
 c302_${PARAMS}_${NAME}.activity.dat \

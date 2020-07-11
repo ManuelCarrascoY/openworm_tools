@@ -20,6 +20,7 @@ def setup(parameter_set,
     exec ('from parameters_%s import ParameterisedModel' % parameter_set, globals())
     params = ParameterisedModel()
 
+    
     #'''
     VA_motors = ["VA%s" % c for c in range_incl(1, 12)]
     VB_motors = ["VB%s" % c for c in range_incl(1, 11)]
@@ -31,9 +32,7 @@ def setup(parameter_set,
     #'''
     motors = list(VA_motors + VB_motors + AS_motors + DA_motors + DB_motors + VD_motors + DD_motors)
     
-    
     inters = ['AVBL', 'AVBR', 'AVAL', 'AVAR']
-    #inters = ['AVBL', 'AVBR']
 
     cells = list(motors + inters)
     
@@ -43,7 +42,7 @@ def setup(parameter_set,
 
 
     cells_to_plot = cells
-    reference = "c302_%s_FW_VNC" % parameter_set
+    reference = "c302_%s_BW" % parameter_set
 
 
     conns_to_include = [
@@ -161,6 +160,7 @@ def setup(parameter_set,
         #'''
         
         
+        
     ]    
     conn_polarity_override = {
         #Inhibitory in Olivares
@@ -180,6 +180,11 @@ def setup(parameter_set,
         #r'^DB\d+-DD\d+$': 'inh',
         #r'^VB\d+-VD\d+$': 'inh',
         
+        #Inhibitory for DD
+        
+        r'^DA\d+-DD\d+$': 'inh',
+        r'^AS\d+-DD\d+$': 'inh',
+        r'^DB\d+-VD\d+$': 'inh',
     }
     conn_polarity_override = {
         #### NEW CIRCUIT ####
@@ -190,9 +195,11 @@ def setup(parameter_set,
         r'^DB\d+-DD\d+$': 'inh',
         
         r'^AS\d+-VD\d+$': 'inh',
-        #VD-DD, VD-VA and VD-VB are already inhibitory
+        #VD-DD and VD-VB are already inhibitory
         
     }
+    
+    
     conn_number_override = {
         '^.+-.+$': 1,
     }
@@ -209,8 +216,8 @@ def setup(parameter_set,
     # Interneuron STIMULATION
     #*************************
     #'''
-    input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
-    input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVAL', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVAR', '0ms', '4000ms', '15pA'))
     #'''
     
     
@@ -220,15 +227,19 @@ def setup(parameter_set,
 
     # Sinusoidal Input
     #'''
-    sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms')) #AMP: 2pA seems to overstimulate
-    sine_input_list.append(('VB1', '0ms', '15000ms', '1.5pA', '800ms'))
-
+    #sine_input_list.append(('DB1', '0ms', '15000ms', '1.5pA', '800ms')) #AMP: 2pA seems to overstimulate
+    #sine_input_list.append(('VB1', '0ms', '15000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('DA9', '0ms', '15000ms', '1.5pA', '800ms'))
+    sine_input_list.append(('VA12', '0ms', '15000ms', '-1.5pA', '800ms'))
+    
+    
     
     config_param_overrides['input'] = input_list
 
     param_overrides = {
         
         'mirrored_elec_conn_params': {
+            
             
             #Connections to DB1 and VB1 have a HIGHER conductance
             r'^AVB._to_.B1_GJ$_elec_syn_gbase': '0.005 nS',
@@ -258,7 +269,6 @@ def setup(parameter_set,
             
             r'^VA\d+_to_DA\d+\_GJ$_elec_syn_gbase': '0.001 nS',
             r'^VA\d+_to_VD\d+\_GJ$_elec_syn_gbase': '0.001 nS',
-            
         },
         
         'initial_memb_pot': '-50 mV',
@@ -267,12 +277,15 @@ def setup(parameter_set,
         r'^DA\d+_to_DB\d+$_exc_syn_conductance': '0.2 nS',
         
         r'^DB\d+_to_VD\d+$_exc_syn_conductance': '0.2 nS',
-
         
         #*********************************
         # Connections between units (chemical)
         #*********************************
         
+        
+        
+        #r'^VD\d+_to_VB\d+$_inh_syn_conductance': '0.2 nS',
+        #r'^DA\d+_to_VD\d+$_exc_syn_conductance': '0.2 nS',
         
         
         #Connect synaptically VB1 to VB2 and so on
@@ -293,7 +306,7 @@ def setup(parameter_set,
         
         #'''
         #Connect synaptically VA1 to VA2 and so on
-        r'^VA\d+_to_VA\d+$_exc_syn_conductance': '18 nS',
+        r'^VA\d+_to_VA\d+$_exc_syn_conductance': '30 nS',
         r'^VA\d+_to_VA\d+$_exc_syn_ar': '0.19 per_s',
         r'^VA\d+_to_VA\d+$_exc_syn_ad': '73 per_s',
         r'^VA\d+_to_VA\d+$_exc_syn_beta': '2.81 per_mV',
@@ -301,7 +314,7 @@ def setup(parameter_set,
         r'^VA\d+_to_VA\d+$_exc_syn_erev': '10 mV',
         
         #Connect synaptically DB1 to DB2 and so on
-        r'^DA\d+_to_DA\d+$_exc_syn_conductance': '20 nS',
+        r'^DA\d+_to_DA\d+$_exc_syn_conductance': '30 nS',
         r'^DA\d+_to_DA\d+$_exc_syn_ar': '0.08 per_s',
         r'^DA\d+_to_DA\d+$_exc_syn_ad': '18 per_s',
         r'^DA\d+_to_DA\d+$_exc_syn_beta': '0.21 per_mV',

@@ -10,7 +10,7 @@ range_incl = lambda start, end:range(start, end + 1)
 
 def setup(parameter_set,
           generate=False,
-          duration=2500,
+          duration=3000,
           dt=0.05,
           target_directory='examples',
           data_reader="UpdatedSpreadsheetDataReader2",
@@ -43,7 +43,7 @@ def setup(parameter_set,
 
 
     cells_to_plot = cells
-    reference = "c302_%s_FW_VNC_muscles" % parameter_set
+    reference = "c302_%s_BW_with_muscles" % parameter_set
 
 
     conns_to_include = [
@@ -186,71 +186,75 @@ def setup(parameter_set,
     sine_input_list = []
     ramp_input_list = []
     
+    #*************************************
+    # Muscles STIMULATION to start motion
+    #*************************************
+    
+    # I have changed this stimulation so that it sets the worm opposite to the muscle stimulation to start the motion in forward locomotion. This way, the worm should quickly be set to move backwards. 
+    
+    input_list.append(('MDR10', '0ms', '150ms', '1pA'))
+    input_list.append(('MDR11', '0ms', '150ms', '2pA'))
+    input_list.append(('MDR12', '0ms', '150ms', '3pA'))
+    input_list.append(('MDR13', '0ms', '150ms', '3pA'))
+    input_list.append(('MDR14', '0ms', '150ms', '2pA'))
+    input_list.append(('MDR15', '0ms', '150ms', '1pA'))
+    
+    input_list.append(('MDL10', '0ms', '150ms', '1pA'))
+    input_list.append(('MDL11', '0ms', '150ms', '2pA'))
+    input_list.append(('MDL12', '0ms', '150ms', '3pA'))
+    input_list.append(('MDL13', '0ms', '150ms', '3pA'))
+    input_list.append(('MDL14', '0ms', '150ms', '2pA'))
+    input_list.append(('MDL15', '0ms', '150ms', '1pA'))
+
+    input_list.append(('MVL03', '0ms', '250ms', '3pA'))
+    input_list.append(('MVL04', '0ms', '250ms', '3pA'))
+    input_list.append(('MVR03', '0ms', '250ms', '3pA'))
+    input_list.append(('MVR04', '0ms', '250ms', '3pA'))
+    
     #*************************
     # Head Muscles STIMULATION
     #*************************
     
-    #FORWARD
     
+    #BACKWARD
     amp = '4pA'
-    dur = '250ms'
-    total_time = 3000
+    total_time = 4000
     total_stim = np.floor(total_time/800).astype(int)
+    start = 150
+    dur = '300ms'
     for stim_num in range(total_stim):
+        count = 7
         for muscle_num in range(7):
+            count = count - 1
             mdlx = 'MDL0%s' % (muscle_num + 1)
             mdrx = 'MDR0%s' % (muscle_num + 1)
             mvlx = 'MVL0%s' % (muscle_num + 1)
             mvrx = 'MVR0%s' % (muscle_num + 1)
-            
+
             if muscle_num >= 9:
                 mdlx = 'MDL%s' % (muscle_num + 1)
                 mdrx = 'MDR%s' % (muscle_num + 1)
                 mvlx = 'MVL%s' % (muscle_num + 1)
                 mvrx = 'MVR%s' % (muscle_num + 1)
-            
-            startd = '%sms' % (stim_num * 800 + muscle_num * 30)
-            startv = '%sms' % ((stim_num * 800 + 400) + muscle_num * 30)
-            
+
+            startd = '%sms' % (start + 700 + 400 + stim_num * 800 + count * 30)
+            startv = '%sms' % (start + 700 + stim_num * 800 + count * 30)
+
             input_list.append((mdlx, startd, dur, amp))
             input_list.append((mdrx, startd, dur, amp))
             if muscle_num != 6:
                 input_list.append((mvlx, startv, dur, amp))
                 input_list.append((mvrx, startv, dur, amp))
-    
-               
-    
-    #*************************************
-    # Muscles STIMULATION to start motion
-    #*************************************
-    
-    input_list.append(('MVR10', '0ms', '150ms', '1pA'))
-    input_list.append(('MVR11', '0ms', '150ms', '2pA'))
-    input_list.append(('MVR12', '0ms', '150ms', '3pA'))
-    input_list.append(('MVR13', '0ms', '150ms', '3pA'))
-    input_list.append(('MVR14', '0ms', '150ms', '2pA'))
-    input_list.append(('MVR15', '0ms', '150ms', '1pA'))
-    
-    input_list.append(('MVL10', '0ms', '150ms', '1pA'))
-    input_list.append(('MVL11', '0ms', '150ms', '2pA'))
-    input_list.append(('MVL12', '0ms', '150ms', '3pA'))
-    input_list.append(('MVL13', '0ms', '150ms', '3pA'))
-    input_list.append(('MVL14', '0ms', '150ms', '2pA'))
-    input_list.append(('MVL15', '0ms', '150ms', '1pA'))
-
-    input_list.append(('MDL21', '0ms', '250ms', '3pA'))
-    input_list.append(('MDL22', '0ms', '250ms', '3pA'))
-    input_list.append(('MDR21', '0ms', '250ms', '3pA'))
-    input_list.append(('MDR22', '0ms', '250ms', '3pA'))
-    
+                
     
     #*************************
     # Interneuron STIMULATION
     #*************************
     #'''
-    input_list.append(('AVBL', '0ms', '3000ms', '15pA'))
-    input_list.append(('AVBR', '0ms', '3000ms', '15pA'))
-
+    #input_list.append(('AVBL', '0ms', '4000ms', '15pA'))
+    #input_list.append(('AVBR', '0ms', '4000ms', '15pA'))
+    input_list.append(('AVAL', '0ms', '3000ms', '15pA'))
+    input_list.append(('AVAR', '0ms', '3000ms', '15pA'))
     #'''
     
     
@@ -260,9 +264,10 @@ def setup(parameter_set,
 
     # Sinusoidal Input
     #'''
-    sine_input_list.append(('DB1', '0ms', '3000ms', '1.5pA', '800ms')) 
-    sine_input_list.append(('VB1', '0ms', '3000ms', '1.5pA', '800ms')) 
-
+    #sine_input_list.append(('DB1', '0ms', '5000ms', '1.5pA', '800ms')) 
+    #sine_input_list.append(('VB1', '0ms', '5000ms', '1.5pA', '800ms')) 
+    sine_input_list.append(('DA9', '0ms', '3000ms', '-1.5pA', '800ms'))
+    sine_input_list.append(('VA12', '0ms', '3000ms', '1.5pA', '800ms'))
     
     
     

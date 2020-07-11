@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Shell script to run a neuronal simulation using pyNeuroML java
+# Takes the 'c302/c302_reference.py' in host and executes it within the docker container. 
+# Has 3 flags: '-n NameOfContainer', '-r NameOfReference' and 'p Parameters'. 
+# By default, if nothing is stated, NameOfContainer = 'worm', NameOfReference = 'IClamp' and Parameters = 'A'
+
 while getopts ":n:r:p:" opt; do
   case $opt in
     n) cont_name="$OPTARG" #	Name of the docker container
@@ -41,6 +46,6 @@ fi
 FILENAME="c302_${REF}.py"
 
 docker start $NAME
-docker cp c302/$FILENAME $NAME:home/ow/c302/c302/
-docker exec $NAME ./shared/run_c302.sh -r ${REF} -p ${PARAMS}
-mv shared/data/* c302/simulation_data/
+docker cp c302/$FILENAME $NAME:home/ow/c302/c302/ #Copy the python script from host to container
+docker exec $NAME ./shared/run_c302.sh -r ${REF} -p ${PARAMS} #Executes the 'shared/run_c302.sh in the container'
+mv shared/data/* c302/simulation_data/ #Moves the resulting data into the host

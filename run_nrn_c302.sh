@@ -1,10 +1,16 @@
 #!/bin/bash
 
+# Shell script to run a neuronal simulation using NEURON
+# Takes the 'c302/c302_reference.py' in host and executes it within the docker container. 
+# Has 3 flags: '-n NameOfContainer', '-r NameOfReference' and 'p Parameters'. 
+# By default, if nothing is stated, NameOfContainer = 'worm', NameOfReference = 'IClamp' and Parameters = 'A'
+
+
 while getopts ":n:r:p:" opt; do
   case $opt in
     n) cont_name="$OPTARG" #	Name of the docker container
     ;;
-    r) reference="$OPTARG" #	Reference of the python script (i.e. IClamp)
+    r) reference="$OPTARG" #	Reference of the python script (e.g. IClamp)
     ;;
     p) parameters="$OPTARG" #	Parameters to use in the simulation
     ;;
@@ -41,7 +47,7 @@ fi
 FILENAME="c302_${REF}.py"
 
 docker start $NAME
-docker cp c302/$FILENAME $NAME:home/ow/c302/c302/
-docker exec $NAME ./shared/run_c302_nrn.sh -r ${REF} -p ${PARAMS}
-mv shared/data/* c302/simulation_data/
+docker cp c302/$FILENAME $NAME:home/ow/c302/c302/ #Copy the python script from host to container
+docker exec $NAME ./shared/run_c302_nrn.sh -r ${REF} -p ${PARAMS} #Executes the 'shared/run_c302_nrn.sh in the container'
+mv shared/data/* c302/simulation_data/ #Moves the resulting data into the host
 

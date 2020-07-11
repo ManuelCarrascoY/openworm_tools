@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This shell script deletes an open container. 
+# It takes a flag '-n NAME' as the name of the containter, by default, the name is set to 'worm'
+
 while getopts ":n:" opt; do
   case $opt in
     n) name="$OPTARG"

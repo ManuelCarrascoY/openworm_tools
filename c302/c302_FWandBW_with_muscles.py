@@ -43,7 +43,7 @@ def setup(parameter_set,
 
 
     cells_to_plot = cells
-    reference = "c302_%s_FWandBW_VNC_muscles" % parameter_set
+    reference = "c302_%s_FWandBW_with_muscles" % parameter_set
 
 
     conns_to_include = [
