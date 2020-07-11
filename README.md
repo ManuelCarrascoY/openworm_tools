@@ -57,7 +57,7 @@ A container can be built with the shell script `build_container.sh`
 
     ./build_container.sh -n ContainerName #Set a name for the container
 
-If no name tag is added, the default name will be set to *worm*. 
+If no name tag is added, the default name will be set to `'worm'`. 
 (Also note that the first time you run this command, Docker will install the *openworm/latest* docker image and it may take a few minutes). 
 
 Once the container is built, you can check its status with the following command: 
@@ -107,11 +107,11 @@ xlogo #This should pop a window with a big 'X'
 
 To make a simulation using c302, I recommend following the instructions from the [c302 GitHub](https://github.com/openworm/c302).
 
-Run them by attaching to the Docker container. Here is a file and package overview: 
+You can run these instructions by attaching to the Docker container with `./attach_to_container`. Here is a file and package overview: 
 
 ![c302 Diagram](./images/c302.png)
 
-I developed some tools to make a fast use of c302 from a jupyter notebook and plot the obtained data using MatPlotLib
+On the `c302/` directory, you can find tools to make a fast use of c302 from a jupyter notebook and plot the obtained data using MatPlotLib
 <img src=./images/matplotlib.png width="100">
 
 #### Run a c302 simulation
@@ -121,7 +121,7 @@ I developed some tools to make a fast use of c302 from a jupyter notebook and pl
 4. Check the Python 3 jupyter notebook `c302/c302.ipynb` to run the simulation and plot the data. 
 
 Example of neuronal dynamics plots: 
-<img src=./images/first.png width="%60">
+<img src=./images/first.png width="700">
 
 # Sibernetic: Body and Environment Simulation 
 
