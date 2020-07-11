@@ -1,11 +1,23 @@
 # Tools for the use of OpenWorm
 
+The repository has been developed as part of my Bachelor Thesis Project: **Models of Neuromorphic Computing: Brain-body-environment simulation of *Caenorhabditis elegans* forward and backward locomotion**
+
+<div class="row">
+  <div class="column">
+    <img src=./images/real_nematode.png width="250">
+  </div>
+  <div class="column">
+    <img src=./images/Logo_UC3M.png width="100">
+  </div>
+  <div class="column">
+    <img src=./images/OW.jpeg width="100">
+  </div>
+</div>
+
 In this repository you will find:
 * Shell scripts developed for using the OpenWorm framework under a docker container.
-* Jupyter Notebooks developed in Python 3 for interpreting the data. 
-* The files developed for the forward and backward locomotion model in *Caenorhabditis elegans*. 
-
-(The repository has been developed as part of my Bachelor Thesis Project: **Models of Neuromorphic Computing: Brain-body-environment simulation of Caenorhabditis elegans forward and backward locomotion**)
+* Jupyter Notebooks in Python 3 for interpreting the data. 
+* Files for the forward and backward locomotion model in *Caenorhabditis elegans*. 
 
 ---
 
@@ -16,22 +28,29 @@ The results of the forward and backward locomotion model are the following:
 
 ![Backward locomotion](/images/BW_gif.gif)
 
-This codes are used to edit the c302_reference.py scripts and run them inside a docker container by following some easy steps. 
-**1. Use c302 inside the container and represent the neuron and muscle activity**
-**2. Run a complete simulation using c302 and Sibernetic**
+---
 
-## About OpenWorm
+# INTRODUCTION
 
-[OpenWorm](http://www.openworm.org) aims to build the first comprehensive computational model of Caenorhabditis elegans (C. elegans), a microscopic roundworm. With only a thousand cells, it solves basic problems such as feeding, mate-finding and predator avoidance. Despite being extremely well-studied in biology, a deep, principled understanding of the biology of this organism remains elusive.
+## About OpenWorm 
+![inline](/images/OW.jpeg)
+
+[OpenWorm](http://www.openworm.org) aims to build the first comprehensive computational model of *Caenorhabditis elegans*: a microscopic roundworm nematode. Their approach towards building the nematode is to collect all the data from biological experiments and integrate it using software models. It has been divided into smaller software sub-projects that can be interconnected to provide various utilities inside the framework. For this project, I have made use of the c302 and Sibernetic frameworks. 
+
+![OpenWorm](/images/)
+
+![OpenWorm projects](/images/OW.png)
 
 ## About Docker Containers
 
-A [Docker](https://www.docker.com/get-started) container is a self-contained environment in which you can run OpenWorm simulations. It's fully set up to get you started by following the steps above. At the moment, it runs simulations and produces visualizations for you, but these visualizations must be viewed outside of the Docker container. 
+A [Docker container](https://www.docker.com/get-started) is an isolated working place in which specific images can be run like the OpenWorm simulations. They allow to store code and all its dependencies so that applications are executed in a fast and secure way within different computers and operative systems. These containers can be executed from your terminal after installing Docker, and can run graphical user interface applications if executed with the proper display commands. The OpenWorm docker image contains all the necessary tools to make the simulation of the nematode C. Elegans using c302, pyNeuroML, NEURON, pyOpenWorm and Sibernetic (For more information, see the [OpenWorm repository](http://www.openworm.org))
 
-### What does the OpenWorm docker contain? 
+![Docker container](/images/docker.png)
 
-Inside the container, we can find all the necessary tools to make the simulation of the nematode C. Elegans using c302, pyNeuroML, NEURON, pyOpenWorm and Sibernetic. 
 
+This codes are used to edit the c302_reference.py scripts and run them inside a docker container by following some easy steps. 
+**1. Use c302 inside the container and represent the neuron and muscle activity**
+**2. Run a complete simulation using c302 and Sibernetic**
 ## Quick Start
 
 ### Install Docker
