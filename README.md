@@ -112,27 +112,32 @@ Run them by attaching to the Docker container. Here is a file and package overvi
 ![c302 Diagram](./images/c302.png)
 
 I developed some tools to make a fast use of c302 from a jupyter notebook and plot the obtained data using MatPlotLib
-<img src=./images/matplotlib.png width="200">
+<img src=./images/matplotlib.png width="100">
 
-1. Go to the `c302/` 
+#### Run a c302 simulation
+1. Go to `c302/` 
 2. Check out the Python 2 commented script `c302/c302_tutorial.py`
-3. Build your own model!
+3. Build your own Python 2 model!
 4. Check the Python 3 jupyter notebook `c302/c302.ipynb` to run the simulation and plot the data. 
 
 Example of neuronal dynamics plots: 
-<img src=./images/first.png width="%80">
+<img src=./images/first.png width="%60">
 
 # Sibernetic: Body and Environment Simulation 
 
-Lastly, the Sibernetic simulator is designed to test the movement of your models. For this, you will need a model which produces motion for **all of the muscles** of the nematode. 
+The Sibernetic physics simulator is designed to test the movement of our models. You will need a model which produces motion for **all of the muscles** of the nematode. 
 
-For the simulations seen in `videos`, the `c302/c302_FW_with_muscles.py` and the `c302/c302_BW_with_muscles.py` scripts were used. The forward and backward simulation could be achieved using the `c302/c302_FWandBW_with_muscles.py`. 
+For the simulations seen in `videos/`, the `c302/c302_FW_with_muscles.py` and the `c302/c302_BW_with_muscles.py` scripts were used. The forward and backward simulation could be achieved using the `c302/c302_FWandBW_with_muscles.py`. 
 
-#### Run the Sibernetic simulator
+Video of the Forward locomotion | Video of the Backward locomotion
+:---: | :---: 
+![Forward locomotion](/images/FW_gif.gif) | ![Backward locomotion](/images/BW_gif.gif)
+
+#### Run the Sibernetic simulation
 We will use the `master_openworm.py` inside the container. 
 
 1. Go to `shared/modified_master_openworm.py` and change the reference to the name of your model.
-```
+```python
 #Default is 15 ms of simulation time.
 sim_duration = 15.0 # We will also change later the duration, this is only 15ms
 if 'DURATION' in os.environ:
@@ -148,9 +153,11 @@ DEFAULTS = {'duration': sim_duration,
             'device': 'GPU',
 ```
 2. Run in terminal: 
-
-    docker exec worm cp ./shared/modified_master_openworm.py ./master_openworm.py
-    docker exec worm python master_openworm.py
+```
+docker exec worm cp ./shared/modified_master_openworm.py ./master_openworm.py
+docker exec worm python master_openworm.py
+```
+3. Check the `./shared/output/` folder for the results of the simulation. 
     
-3. This simulation should take no longer than 15 minutes. Check that it finishes and run a simulation changing `sim_duration = 15000.0` (1.5 seconds)
+4. This simulation should take no longer than 15 minutes. Check that it finishes and run a simulation changing `sim_duration = 15000.0` (1.5 seconds). It should take about 5 hours. 
 
